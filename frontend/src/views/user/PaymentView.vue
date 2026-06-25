@@ -1069,6 +1069,23 @@ onMounted(async () => {
         }
       }
     }
+    // Deep-link to a specific plan's checkout: ?plan_id=123
+    if (route.query.plan_id) {
+      const planId = Number(route.query.plan_id)
+      const plan = checkout.value.plans.find(p => p.id === planId)
+      if (plan) {
+        activeTab.value = 'subscription'
+        selectedPlan.value = plan
+      }
+    }
+    // Deep-link to a top-up amount: ?amount=25
+    if (route.query.amount && !checkout.value.balance_disabled) {
+      const amt = Number(route.query.amount)
+      if (Number.isFinite(amt) && amt > 0) {
+        activeTab.value = 'recharge'
+        amount.value = amt
+      }
+    }
   } catch (err: unknown) { appStore.showError(extractI18nErrorMessage(err, t, 'payment.errors', t('common.error'))) }
   finally { loading.value = false }
   // Fetch active subscriptions (uses cache, non-blocking)

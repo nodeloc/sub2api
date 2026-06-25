@@ -15,6 +15,18 @@
         :wechat-mp-enabled="wechatOAuthMPEnabled"
       />
 
+      <!-- Subscription / Go Pro (fork-local kissopen upgrade entry, lives in Settings) -->
+      <router-link
+        to="/pro"
+        class="card flex items-center justify-between gap-4 border-primary-200 bg-primary-50 p-6 transition hover:shadow-md dark:border-primary-800 dark:bg-primary-900/20"
+      >
+        <div>
+          <h3 class="font-semibold text-primary-800 dark:text-primary-200">{{ t('pro.title') }}</h3>
+          <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{{ t('pro.sub') }}</p>
+        </div>
+        <span class="btn btn-primary btn-sm whitespace-nowrap">{{ t('pro.viewPlans') }}</span>
+      </router-link>
+
       <div
         v-if="contactInfo"
         class="card border-primary-200 bg-primary-50 p-6 dark:bg-primary-900/20"

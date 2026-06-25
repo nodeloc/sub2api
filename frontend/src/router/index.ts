@@ -40,6 +40,66 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    // Standalone kissopen dashboard design demo (static data, no auth)
+    path: '/design/dashboard',
+    name: 'KitDashboard',
+    component: () => import('@/views/kit/KitDashboardView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Dashboard preview'
+    }
+  },
+  {
+    // Standalone kissopen mobile design demo (static data, no auth)
+    path: '/design/mobile',
+    name: 'KitMobile',
+    component: () => import('@/views/kit/KitMobileView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Mobile preview'
+    }
+  },
+  {
+    // Standalone kissopen pricing design page (static data, no auth)
+    path: '/design/pricing',
+    name: 'KitPricing',
+    component: () => import('@/views/kit/KitPricingView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Pricing preview'
+    }
+  },
+  {
+    // Standalone kissopen docs design page (static data, no auth)
+    path: '/design/docs',
+    name: 'KitDocs',
+    component: () => import('@/views/kit/KitDocsView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Docs preview'
+    }
+  },
+  {
+    // Public pricing page (real marketing route, linked from the landing nav)
+    path: '/pricing',
+    name: 'Pricing',
+    component: () => import('@/views/kit/KitPricingView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Pricing'
+    }
+  },
+  {
+    // Public developer docs / quickstart page
+    path: '/docs',
+    name: 'Docs',
+    component: () => import('@/views/kit/KitDocsView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Docs'
+    }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/LoginView.vue'),
@@ -184,7 +244,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dashboard',
     name: 'Dashboard',
-    component: () => import('@/views/user/DashboardView.vue'),
+    // Fork-local kissopen redesign of the user dashboard (real data). The
+    // upstream @/views/user/DashboardView.vue is left intact for clean merges.
+    component: () => import('@/views/user/kissopen/DashboardView.vue'),
     meta: {
       requiresAuth: true,
       requiresAdmin: false,
@@ -196,7 +258,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/keys',
     name: 'Keys',
-    component: () => import('@/views/user/KeysView.vue'),
+    component: () => import('@/views/user/kissopen/KeysView.vue'),
     meta: {
       requiresAuth: true,
       requiresAdmin: false,
@@ -208,7 +270,8 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/usage',
     name: 'Usage',
-    component: () => import('@/views/user/UsageView.vue'),
+    // Fork-local kissopen redesign (full copy + restyle). Upstream untouched.
+    component: () => import('@/views/user/kissopen/UsageView.vue'),
     meta: {
       requiresAuth: true,
       requiresAdmin: false,
@@ -216,6 +279,49 @@ const routes: RouteRecordRaw[] = [
       titleKey: 'usage.title',
       descriptionKey: 'usage.description'
     }
+  },
+  {
+    // kissopen design pages (gateway-style; static/representative data).
+    path: '/models',
+    name: 'KoModels',
+    component: () => import('@/views/user/kissopen/ModelsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Models' }
+  },
+  {
+    path: '/rankings',
+    name: 'KoRankings',
+    component: () => import('@/views/user/kissopen/RankingsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Rankings' }
+  },
+  {
+    path: '/providers',
+    name: 'KoProviders',
+    component: () => import('@/views/user/kissopen/ProvidersView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Providers' }
+  },
+  {
+    path: '/playground',
+    name: 'KoPlayground',
+    component: () => import('@/views/user/kissopen/PlaygroundView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Playground' }
+  },
+  {
+    path: '/presets',
+    name: 'KoPresets',
+    component: () => import('@/views/user/kissopen/PresetsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Presets' }
+  },
+  {
+    path: '/credits',
+    name: 'KoCredits',
+    component: () => import('@/views/user/kissopen/CreditsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Credits' }
+  },
+  {
+    path: '/pro',
+    name: 'KoGoPro',
+    component: () => import('@/views/user/kissopen/GoProView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Go Pro' }
   },
   {
     path: '/redeem',

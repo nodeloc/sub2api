@@ -12,7 +12,7 @@
         <EmptyState :title="t('dashboard.noUsageRecords')" :description="t('dashboard.startUsingApi')" />
       </div>
       <div v-else class="space-y-3">
-        <div v-for="log in data" :key="log.id" class="flex items-center justify-between rounded-xl bg-gray-50 p-4 transition-colors hover:bg-gray-100 dark:bg-dark-800/50 dark:hover:bg-dark-800">
+        <div v-for="log in data" :key="log.id" class="ru-row flex items-center justify-between rounded-xl p-4">
           <div class="flex items-center gap-4">
             <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/30">
               <Icon name="beaker" size="md" class="text-primary-600 dark:text-primary-400" />
@@ -31,9 +31,9 @@
           </div>
         </div>
 
-        <router-link to="/usage" class="flex items-center justify-center gap-2 py-3 text-sm font-medium text-primary-600 transition-colors hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300">
+        <router-link to="/usage" class="ru-all group flex items-center justify-center gap-2 py-3 text-sm font-medium text-primary-600 dark:text-primary-400">
           {{ t('dashboard.viewAllUsage') }}
-          <Icon name="arrowRight" size="sm" />
+          <Icon name="arrowRight" size="sm" class="ru-all__arrow" />
         </router-link>
       </div>
     </div>
@@ -55,3 +55,31 @@ defineProps<{
 const { t } = useI18n()
 const formatCost = (c: number) => c.toFixed(4)
 </script>
+
+<style scoped>
+/* kissopen interaction model — gentle warm hover wash, ease-out timing,
+   subtle arrow nudge on the "view all" link. */
+.ru-row {
+  background: var(--surface-sunken);
+  border: 1px solid transparent;
+  transition: background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.ru-row:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-xs);
+}
+.ru-all {
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.ru-all:hover {
+  color: var(--brand-hover);
+}
+.ru-all__arrow {
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.ru-all:hover .ru-all__arrow {
+  transform: translateX(3px);
+}
+</style>

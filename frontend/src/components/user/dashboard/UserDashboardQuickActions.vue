@@ -4,8 +4,8 @@
       <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('dashboard.quickActions') }}</h2>
     </div>
     <div class="space-y-3 p-4">
-      <button @click="router.push('/keys')" class="group flex w-full items-center gap-4 rounded-xl bg-gray-50 p-4 text-left transition-all duration-200 hover:bg-gray-100 dark:bg-dark-800/50 dark:hover:bg-dark-800">
-        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary-100 transition-transform group-hover:scale-105 dark:bg-primary-900/30">
+      <button @click="router.push('/keys')" class="qa-action group">
+        <div class="qa-chip flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/30">
           <Icon name="key" size="lg" class="text-primary-600 dark:text-primary-400" />
         </div>
         <div class="min-w-0 flex-1">
@@ -15,13 +15,13 @@
         <Icon
           name="chevronRight"
           size="md"
-          class="text-gray-400 transition-colors group-hover:text-primary-500 dark:text-dark-500"
+          class="qa-chev text-gray-400 group-hover:text-primary-500 dark:text-dark-500"
         />
       </button>
 
-      <button @click="router.push('/usage')" class="group flex w-full items-center gap-4 rounded-xl bg-gray-50 p-4 text-left transition-all duration-200 hover:bg-gray-100 dark:bg-dark-800/50 dark:hover:bg-dark-800">
-        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 transition-transform group-hover:scale-105 dark:bg-emerald-900/30">
-          <Icon name="chart" size="lg" class="text-emerald-600 dark:text-emerald-400" />
+      <button @click="router.push('/usage')" class="qa-action group">
+        <div class="qa-chip flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/30">
+          <Icon name="chart" size="lg" class="text-primary-600 dark:text-primary-400" />
         </div>
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium text-gray-900 dark:text-white">{{ t('dashboard.viewUsage') }}</p>
@@ -30,13 +30,13 @@
         <Icon
           name="chevronRight"
           size="md"
-          class="text-gray-400 transition-colors group-hover:text-emerald-500 dark:text-dark-500"
+          class="qa-chev text-gray-400 group-hover:text-primary-500 dark:text-dark-500"
         />
       </button>
 
-      <button @click="router.push('/redeem')" class="group flex w-full items-center gap-4 rounded-xl bg-gray-50 p-4 text-left transition-all duration-200 hover:bg-gray-100 dark:bg-dark-800/50 dark:hover:bg-dark-800">
-        <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-amber-100 transition-transform group-hover:scale-105 dark:bg-amber-900/30">
-          <Icon name="gift" size="lg" class="text-amber-600 dark:text-amber-400" />
+      <button @click="router.push('/redeem')" class="qa-action group">
+        <div class="qa-chip flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-secondary-100 dark:bg-secondary-900/30">
+          <Icon name="gift" size="lg" class="text-secondary-600 dark:text-secondary-400" />
         </div>
         <div class="min-w-0 flex-1">
           <p class="text-sm font-medium text-gray-900 dark:text-white">{{ t('dashboard.redeemCode') }}</p>
@@ -45,7 +45,7 @@
         <Icon
           name="chevronRight"
           size="md"
-          class="text-gray-400 transition-colors group-hover:text-amber-500 dark:text-dark-500"
+          class="qa-chev text-gray-400 group-hover:text-secondary-500 dark:text-dark-500"
         />
       </button>
     </div>
@@ -59,3 +59,47 @@ import Icon from '@/components/icons/Icon.vue'
 const router = useRouter()
 const { t } = useI18n()
 </script>
+
+<style scoped>
+/* kissopen interaction model — quick, gentle ease-out; warm hover wash,
+   tiny shrink on press, gentle chevron nudge. No bouncy overshoot. */
+.qa-action {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+  transition: background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out);
+}
+.qa-action:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+.qa-action:active {
+  transform: scale(0.985);
+}
+.qa-action:focus-visible {
+  outline: none;
+  box-shadow: var(--ring-focus);
+}
+.qa-chip {
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.qa-action:hover .qa-chip {
+  transform: scale(1.05);
+}
+.qa-chev {
+  transition: transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.qa-action:hover .qa-chev {
+  transform: translateX(3px);
+}
+</style>
