@@ -12,406 +12,277 @@
     <div v-else v-html="homeContent"></div>
   </div>
 
-  <!-- Default Home Page -->
-  <div
-    v-else
-    class="relative flex min-h-screen flex-col overflow-hidden bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-100 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950"
-  >
-    <!-- Background Decorations -->
-    <div class="pointer-events-none absolute inset-0 overflow-hidden">
-      <div
-        class="absolute -right-40 -top-40 h-96 w-96 rounded-full bg-primary-400/20 blur-3xl"
-      ></div>
-      <div
-        class="absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-primary-500/15 blur-3xl"
-      ></div>
-      <div
-        class="absolute left-1/3 top-1/4 h-72 w-72 rounded-full bg-primary-300/10 blur-3xl"
-      ></div>
-      <div
-        class="absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-primary-400/10 blur-3xl"
-      ></div>
-      <div
-        class="absolute inset-0 bg-[linear-gradient(rgba(20,184,166,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(20,184,166,0.03)_1px,transparent_1px)] bg-[size:64px_64px]"
-      ></div>
-    </div>
-
-    <!-- Header -->
-    <header class="relative z-20 px-6 py-4">
-      <nav class="mx-auto flex max-w-6xl items-center justify-between">
-        <!-- Logo -->
-        <div class="flex items-center">
-          <div class="h-10 w-10 overflow-hidden rounded-xl shadow-md">
-            <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-full w-full object-contain" />
-          </div>
-        </div>
-
-        <!-- Nav Actions -->
-        <div class="flex items-center gap-3">
-          <!-- Language Switcher -->
+  <!-- Default Home Page — kissopen marketing landing -->
+  <div v-else class="lp-root">
+    <!-- ============ Nav ============ -->
+    <div class="lp-nav">
+      <div class="lp-wrap lp-navrow">
+        <a href="#top" class="lp-logo">
+          <img
+            v-if="siteLogo"
+            :src="siteLogo"
+            alt="logo"
+            class="lp-logo-img"
+          />
+          <span class="lp-logo-mark">{{ siteName }}</span>
+        </a>
+        <nav class="lp-navnav">
+          <a class="lp-navlink" href="#models">{{ t('home.landing.nav.models') }}</a>
+          <a class="lp-navlink" href="#how">{{ t('home.landing.nav.how') }}</a>
+          <router-link class="lp-navlink" to="/pricing">{{ t('home.landing.nav.pricing') }}</router-link>
+          <router-link class="lp-navlink" to="/docs">{{ t('home.landing.nav.docs') }}</router-link>
+        </nav>
+        <div class="lp-navactions">
           <LocaleSwitcher />
-
-          <!-- Doc Link -->
-          <a
-            v-if="docUrl"
-            :href="docUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white"
-            :title="t('home.viewDocs')"
-          >
-            <Icon name="book" size="md" />
-          </a>
-
-          <!-- Theme Toggle -->
           <button
-            @click="toggleTheme"
-            class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white"
+            class="lp-icontoggle"
             :title="isDark ? t('home.switchToLight') : t('home.switchToDark')"
+            @click="toggleTheme"
           >
             <Icon v-if="isDark" name="sun" size="md" />
             <Icon v-else name="moon" size="md" />
           </button>
+          <template v-if="isAuthenticated">
+            <router-link :to="dashboardPath" class="lp-btn lp-btn-primary lp-btn-sm">
+              {{ t('home.dashboard') }}
+            </router-link>
+          </template>
+          <template v-else>
+            <router-link to="/login" class="lp-navlink lp-signin">{{ t('home.landing.nav.signIn') }}</router-link>
+            <router-link to="/login" class="lp-btn lp-btn-primary lp-btn-sm">{{ t('home.landing.nav.startFree') }}</router-link>
+          </template>
+        </div>
+      </div>
+    </div>
 
-          <!-- Login / Dashboard Button -->
-          <router-link
-            v-if="isAuthenticated"
-            :to="dashboardPath"
-            class="inline-flex items-center gap-1.5 rounded-full bg-gray-900 py-1 pl-1 pr-2.5 transition-colors hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
-            <span
-              class="flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-primary-400 to-primary-600 text-[10px] font-semibold text-white"
-            >
-              {{ userInitial }}
-            </span>
-            <span class="text-xs font-medium text-white">{{ t('home.dashboard') }}</span>
-            <svg
-              class="h-3 w-3 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
-              />
-            </svg>
+    <!-- ============ Hero ============ -->
+    <section id="top" class="lp-hero">
+      <div class="lp-bloom lp-bloom-pink"></div>
+      <div class="lp-bloom lp-bloom-coral"></div>
+      <div class="lp-wrap lp-hero-inner">
+        <span class="lp-badge lp-badge-brand lp-badge-dot">{{ t('home.landing.hero.badge') }}</span>
+        <h1 class="lp-hero-title">
+          {{ t('home.landing.hero.titleLine1') }}<br />
+          <span class="lp-grad-text">{{ t('home.landing.hero.titleLine2') }}</span>
+        </h1>
+        <p class="lp-hero-sub">
+          {{ t('home.landing.hero.subtitle', { name: siteName }) }}
+        </p>
+        <div class="lp-hero-cta">
+          <router-link :to="ctaPath" class="lp-btn lp-btn-gradient lp-btn-lg">
+            {{ t('home.landing.hero.start') }}
+            <SvgArrow />
           </router-link>
-          <router-link
-            v-else
-            to="/login"
-            class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
-            {{ t('home.login') }}
+          <a :href="playgroundLink" class="lp-btn lp-btn-secondary lp-btn-lg">
+            <SvgChat />
+            {{ t('home.landing.hero.playground') }}
+          </a>
+        </div>
+        <div class="lp-stats">
+          <div v-for="s in heroStats" :key="s.label" class="lp-stat">
+            <div class="lp-stat-num">{{ s.value }}</div>
+            <div class="lp-stat-label">{{ s.label }}</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Provider logos strip ============ -->
+    <div class="lp-wrap lp-logos">
+      <div class="lp-logos-eyebrow">{{ t('home.landing.logos.eyebrow') }}</div>
+      <div class="lp-logos-row">
+        <span v-for="n in providerNames" :key="n" class="lp-logos-name">{{ n }}</span>
+      </div>
+    </div>
+
+    <!-- ============ How it works ============ -->
+    <section id="how" class="lp-band">
+      <div class="lp-wrap lp-band-inner">
+        <h2 class="lp-h2 lp-center">{{ t('home.landing.how.title') }}</h2>
+        <p class="lp-lead lp-center">{{ t('home.landing.how.subtitle') }}</p>
+        <div class="lp-grid-3">
+          <div v-for="step in steps" :key="step.title" class="lp-card lp-card-hover lp-step">
+            <span class="lp-step-icon">
+              <component :is="step.icon" />
+            </span>
+            <h3 class="lp-h3">{{ step.title }}</h3>
+            <p class="lp-muted-sm">{{ step.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Models ============ -->
+    <section id="models">
+      <div class="lp-wrap lp-band-inner">
+        <div class="lp-models-head">
+          <div>
+            <h2 class="lp-h2">{{ t('home.landing.models.title') }}</h2>
+            <p class="lp-lead">{{ t('home.landing.models.subtitle') }}</p>
+          </div>
+          <router-link :to="ctaPath" class="lp-btn lp-btn-ghost">
+            {{ t('home.landing.models.browseAll') }}
+            <SvgArrow />
           </router-link>
         </div>
-      </nav>
-    </header>
-
-    <!-- Main Content -->
-    <main class="relative z-10 flex-1 px-6 py-16">
-      <div class="mx-auto max-w-6xl">
-        <!-- Hero Section - Left/Right Layout -->
-        <div class="mb-12 flex flex-col items-center justify-between gap-12 lg:flex-row lg:gap-16">
-          <!-- Left: Text Content -->
-          <div class="flex-1 text-center lg:text-left">
-            <h1
-              class="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"
-            >
-              {{ siteName }}
-            </h1>
-            <p class="mb-8 text-lg text-gray-600 dark:text-dark-300 md:text-xl">
-              {{ siteSubtitle }}
-            </p>
-
-            <!-- CTA Button -->
-            <div>
-              <router-link
-                :to="isAuthenticated ? dashboardPath : '/login'"
-                class="btn btn-primary px-8 py-3 text-base shadow-lg shadow-primary-500/30"
-              >
-                {{ isAuthenticated ? t('home.goToDashboard') : t('home.getStarted') }}
-                <Icon name="arrowRight" size="md" class="ml-2" :stroke-width="2" />
-              </router-link>
+        <div class="lp-grid-3">
+          <div v-for="m in models" :key="m.provider" class="lp-card lp-card-hover lp-model">
+            <div class="lp-model-top">
+              <span class="lp-model-avatar"><ModelIcon :model="m.name" size="24px" /></span>
+              <div class="lp-model-id">
+                <div class="lp-model-name">{{ m.name }}</div>
+                <div class="lp-model-provider">{{ m.provider }}</div>
+              </div>
+              <span class="lp-badge lp-badge-dot" :class="statusClass(m.status)">{{ statusLabel(m.status) }}</span>
             </div>
-          </div>
-
-          <!-- Right: Terminal Animation -->
-          <div class="flex flex-1 justify-center lg:justify-end">
-            <div class="terminal-container">
-              <div class="terminal-window">
-                <!-- Window header -->
-                <div class="terminal-header">
-                  <div class="terminal-buttons">
-                    <span class="btn-close"></span>
-                    <span class="btn-minimize"></span>
-                    <span class="btn-maximize"></span>
-                  </div>
-                  <span class="terminal-title">terminal</span>
-                </div>
-                <!-- Terminal content -->
-                <div class="terminal-body">
-                  <div class="code-line line-1">
-                    <span class="code-prompt">$</span>
-                    <span class="code-cmd">curl</span>
-                    <span class="code-flag">-X POST</span>
-                    <span class="code-url">/v1/messages</span>
-                  </div>
-                  <div class="code-line line-2">
-                    <span class="code-comment"># Routing to upstream...</span>
-                  </div>
-                  <div class="code-line line-3">
-                    <span class="code-success">200 OK</span>
-                    <span class="code-response">{ "content": "Hello!" }</span>
-                  </div>
-                  <div class="code-line line-4">
-                    <span class="code-prompt">$</span>
-                    <span class="cursor"></span>
-                  </div>
-                </div>
+            <p class="lp-muted-sm lp-model-desc">{{ m.description }}</p>
+            <div class="lp-model-tags">
+              <span class="lp-badge lp-badge-mono">{{ m.context }} {{ t('home.landing.models.ctx') }}</span>
+              <span v-for="tag in m.tags" :key="tag" class="lp-badge lp-badge-pink">{{ tag }}</span>
+            </div>
+            <div class="lp-model-prices">
+              <div>
+                <div class="lp-price-label">{{ t('home.landing.models.input') }}</div>
+                <div class="lp-price-val">{{ m.priceIn }}</div>
+              </div>
+              <div>
+                <div class="lp-price-label">{{ t('home.landing.models.output') }}</div>
+                <div class="lp-price-val">{{ m.priceOut }}</div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <!-- Feature Tags - Centered -->
-        <div class="mb-12 flex flex-wrap items-center justify-center gap-4 md:gap-6">
-          <div
-            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
-          >
-            <Icon name="swap" size="sm" class="text-primary-500" />
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
-              t('home.tags.subscriptionToApi')
-            }}</span>
-          </div>
-          <div
-            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
-          >
-            <Icon name="shield" size="sm" class="text-primary-500" />
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
-              t('home.tags.stickySession')
-            }}</span>
-          </div>
-          <div
-            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
-          >
-            <Icon name="chart" size="sm" class="text-primary-500" />
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
-              t('home.tags.realtimeBilling')
-            }}</span>
-          </div>
-        </div>
-
-        <!-- Features Grid -->
-        <div class="mb-12 grid gap-6 md:grid-cols-3">
-          <!-- Feature 1: Unified Gateway -->
-          <div
-            class="group rounded-2xl border border-gray-200/50 bg-white/60 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
-          >
-            <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30 transition-transform group-hover:scale-110"
-            >
-              <Icon name="server" size="lg" class="text-white" />
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-              {{ t('home.features.unifiedGateway') }}
-            </h3>
-            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
-              {{ t('home.features.unifiedGatewayDesc') }}
-            </p>
-          </div>
-
-          <!-- Feature 2: Account Pool -->
-          <div
-            class="group rounded-2xl border border-gray-200/50 bg-white/60 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
-          >
-            <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/30 transition-transform group-hover:scale-110"
-            >
-              <svg
-                class="h-6 w-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="1.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
-                />
-              </svg>
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-              {{ t('home.features.multiAccount') }}
-            </h3>
-            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
-              {{ t('home.features.multiAccountDesc') }}
-            </p>
-          </div>
-
-          <!-- Feature 3: Billing & Quota -->
-          <div
-            class="group rounded-2xl border border-gray-200/50 bg-white/60 p-6 backdrop-blur-sm transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/10 dark:border-dark-700/50 dark:bg-dark-800/60"
-          >
-            <div
-              class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/30 transition-transform group-hover:scale-110"
-            >
-              <svg
-                class="h-6 w-6 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                stroke-width="1.5"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"
-                />
-              </svg>
-            </div>
-            <h3 class="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-              {{ t('home.features.balanceQuota') }}
-            </h3>
-            <p class="text-sm leading-relaxed text-gray-600 dark:text-dark-400">
-              {{ t('home.features.balanceQuotaDesc') }}
-            </p>
-          </div>
-        </div>
-
-        <!-- Supported Providers -->
-        <div class="mb-8 text-center">
-          <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
-            {{ t('home.providers.title') }}
-          </h2>
-          <p class="text-sm text-gray-600 dark:text-dark-400">
-            {{ t('home.providers.description') }}
+    <!-- ============ Drop-in code ============ -->
+    <section class="lp-band">
+      <div class="lp-wrap lp-code-row">
+        <div>
+          <span class="lp-badge lp-badge-pink">{{ t('home.landing.code.badge') }}</span>
+          <h2 class="lp-h2 lp-code-h2">{{ t('home.landing.code.title') }}</h2>
+          <p class="lp-lead lp-code-lead">
+            {{ t('home.landing.code.desc', { name: siteName }) }}
           </p>
+          <router-link :to="ctaPath" class="lp-btn lp-btn-primary">
+            <SvgCopy />
+            {{ t('home.landing.code.copyKey') }}
+          </router-link>
         </div>
+        <div class="lp-code">
+          <div class="lp-code-bar">
+            <span class="lp-code-lang">python</span>
+          </div>
+          <pre class="lp-code-pre"><span class="lp-c-kw">from</span> openai <span class="lp-c-kw">import</span> OpenAI
 
-        <div class="mb-16 flex flex-wrap items-center justify-center gap-4">
-          <!-- Claude - Supported -->
+client = OpenAI(
+    base_url=<span class="lp-c-str">"{{ apiBaseUrl }}"</span>,
+    api_key=<span class="lp-c-str">"sk-••••••••"</span>,
+)
+
+r = client.chat.completions.create(
+    model=<span class="lp-c-str">"anthropic/claude-opus"</span>,
+    messages=[{<span class="lp-c-str">"role"</span>: <span class="lp-c-str">"user"</span>, <span class="lp-c-str">"content"</span>: <span class="lp-c-str">"hi"</span>}],
+)</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Pricing ============ -->
+    <section id="pricing">
+      <div class="lp-wrap lp-band-inner">
+        <h2 class="lp-h2 lp-center">{{ t('home.landing.pricing.title') }}</h2>
+        <p class="lp-lead lp-center">{{ t('home.landing.pricing.subtitle') }}</p>
+        <div class="lp-grid-3 lp-pricing">
           <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
+            v-for="p in plans"
+            :key="p.name"
+            class="lp-card lp-plan"
+            :class="{ 'lp-plan-featured': p.featured }"
           >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-400 to-orange-500"
-            >
-              <span class="text-xs font-bold text-white">C</span>
+            <span v-if="p.featured" class="lp-badge lp-badge-solid lp-plan-tag">{{ t('home.landing.pricing.mostPopular') }}</span>
+            <h3 class="lp-h3">{{ p.name }}</h3>
+            <div class="lp-plan-price">
+              <span class="lp-plan-amount">{{ p.price }}</span>
+              <span class="lp-plan-note">{{ p.note }}</span>
             </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.claude') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
-          <!-- GPT - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-green-500 to-green-600"
-            >
-              <span class="text-xs font-bold text-white">G</span>
+            <div class="lp-plan-feats">
+              <div v-for="f in p.feats" :key="f" class="lp-plan-feat">
+                <span class="lp-check"><SvgCheck /></span>{{ f }}
+              </div>
             </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">GPT</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
+            <router-link
+              :to="ctaPath"
+              class="lp-btn lp-btn-block"
+              :class="p.featured ? 'lp-btn-gradient' : 'lp-btn-secondary'"
             >
-          </div>
-          <!-- Gemini - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600"
-            >
-              <span class="text-xs font-bold text-white">G</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.gemini') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
-          <!-- Antigravity - Supported -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-primary-200 bg-white/60 px-5 py-3 ring-1 ring-primary-500/20 backdrop-blur-sm dark:border-primary-800 dark:bg-dark-800/60"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-rose-500 to-pink-600"
-            >
-              <span class="text-xs font-bold text-white">A</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.antigravity') }}</span>
-            <span
-              class="rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-medium text-primary-600 dark:bg-primary-900/30 dark:text-primary-400"
-              >{{ t('home.providers.supported') }}</span
-            >
-          </div>
-          <!-- More - Coming Soon -->
-          <div
-            class="flex items-center gap-2 rounded-xl border border-gray-200/50 bg-white/40 px-5 py-3 opacity-60 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/40"
-          >
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-gray-500 to-gray-600"
-            >
-              <span class="text-xs font-bold text-white">+</span>
-            </div>
-            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{ t('home.providers.more') }}</span>
-            <span
-              class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-dark-700 dark:text-dark-400"
-              >{{ t('home.providers.soon') }}</span
-            >
+              {{ p.cta }}
+            </router-link>
           </div>
         </div>
       </div>
-    </main>
+    </section>
 
-    <!-- Footer -->
-    <footer class="relative z-10 border-t border-gray-200/50 px-6 py-8 dark:border-dark-800/50">
-      <div
-        class="mx-auto flex max-w-6xl flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left"
-      >
-        <p class="text-sm text-gray-500 dark:text-dark-400">
-          &copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}
-        </p>
-        <div class="flex items-center gap-4">
-          <a
-            v-if="docUrl"
-            :href="docUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
-          >
-            {{ t('home.docs') }}
-          </a>
-          <a
-            :href="githubUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
-          >
-            GitHub
-          </a>
+    <!-- ============ CTA ============ -->
+    <section>
+      <div class="lp-wrap lp-cta-wrap">
+        <div class="lp-cta">
+          <h2 class="lp-cta-title">{{ t('home.landing.cta.title') }}</h2>
+          <p class="lp-cta-sub">{{ t('home.landing.cta.subtitle') }}</p>
+          <div class="lp-cta-btns">
+            <router-link :to="ctaPath" class="lp-btn lp-btn-lg lp-cta-btn-light">{{ t('home.landing.cta.createAccount') }}</router-link>
+            <a v-if="docUrl" :href="docUrl" target="_blank" rel="noopener noreferrer" class="lp-btn lp-btn-lg lp-cta-btn-glass">{{ t('home.landing.cta.readDocs') }}</a>
+          </div>
         </div>
+      </div>
+    </section>
+
+    <!-- ============ Footer ============ -->
+    <footer class="lp-footer">
+      <div class="lp-wrap lp-footer-grid">
+        <div>
+          <a href="#top" class="lp-logo">
+            <img v-if="siteLogo" :src="siteLogo" alt="logo" class="lp-logo-img" />
+            <span class="lp-logo-mark">{{ siteName }}</span>
+          </a>
+          <p class="lp-footer-tag">{{ t('home.landing.footer.tagline') }}</p>
+        </div>
+        <div v-for="col in footerCols" :key="col.head" class="lp-footer-col">
+          <div class="lp-footer-head">{{ col.head }}</div>
+          <div class="lp-footer-links">
+            <a
+              v-for="link in col.items"
+              :key="link.label"
+              :href="link.href"
+              :target="link.external ? '_blank' : undefined"
+              :rel="link.external ? 'noopener noreferrer' : undefined"
+              class="lp-navlink"
+            >{{ link.label }}</a>
+          </div>
+        </div>
+      </div>
+      <div class="lp-wrap lp-footer-copy">
+        © {{ currentYear }} {{ siteName }} · {{ t('home.footer.allRightsReserved') }}
       </div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
+import ModelIcon from '@/components/common/ModelIcon.vue'
 
-const { t } = useI18n()
+const { t, tm, rt } = useI18n()
+
+// Read a localized string array (e.g. pricing feature lists)
+function tArr(key: string): string[] {
+  const arr = tm(key) as unknown[]
+  return Array.isArray(arr) ? arr.map((v) => rt(v as string)) : []
+}
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -419,7 +290,6 @@ const appStore = useAppStore()
 // Site settings - directly from appStore (already initialized from injected config)
 const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'Sub2API')
 const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '')
-const siteSubtitle = computed(() => appStore.cachedPublicSettings?.site_subtitle || 'AI API Gateway Platform')
 const docUrl = computed(() => appStore.cachedPublicSettings?.doc_url || appStore.docUrl || '')
 const homeContent = computed(() => appStore.cachedPublicSettings?.home_content || '')
 
@@ -438,15 +308,144 @@ const githubUrl = 'https://github.com/Wei-Shaw/sub2api'
 // Auth state
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const isAdmin = computed(() => authStore.isAdmin)
-const dashboardPath = computed(() => isAdmin.value ? '/admin/dashboard' : '/dashboard')
-const userInitial = computed(() => {
-  const user = authStore.user
-  if (!user || !user.email) return ''
-  return user.email.charAt(0).toUpperCase()
-})
+const dashboardPath = computed(() => (isAdmin.value ? '/admin/dashboard' : '/dashboard'))
+
+// Primary CTA destination: dashboard when signed in, otherwise login
+const ctaPath = computed(() => (isAuthenticated.value ? dashboardPath.value : '/login'))
+const playgroundLink = computed(() => docUrl.value || '/login')
+const apiBaseUrl = computed(() => `${window.location.origin}/v1`)
 
 // Current year for footer
 const currentYear = computed(() => new Date().getFullYear())
+
+// ---- Landing-page content ----
+// Numeric values stay literal; only labels are localized.
+const heroStats = computed(() => [
+  { value: '240+', label: t('home.landing.stats.models') },
+  { value: '1', label: t('home.landing.stats.apiBalance') },
+  { value: '99.98%', label: t('home.landing.stats.uptime') },
+  { value: '0', label: t('home.landing.stats.lockin') },
+])
+
+const providerNames = ['Anthropic', 'OpenAI', 'Google', 'Meta', 'Mistral', 'DeepSeek']
+
+// Inline lucide-style icons (2px stroke, currentColor)
+const svg = (children: ReturnType<typeof h>[]) =>
+  h(
+    'svg',
+    {
+      viewBox: '0 0 24 24',
+      fill: 'none',
+      stroke: 'currentColor',
+      'stroke-width': 2,
+      'stroke-linecap': 'round',
+      'stroke-linejoin': 'round',
+    },
+    children
+  )
+const SvgArrow = () => svg([h('path', { d: 'M7 17 17 7' }), h('path', { d: 'M7 7h10v10' })])
+const SvgChat = () => svg([h('path', { d: 'M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z' })])
+const SvgCopy = () =>
+  svg([
+    h('rect', { x: 9, y: 9, width: 12, height: 12, rx: 2 }),
+    h('path', { d: 'M5 15a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2' }),
+  ])
+const SvgCheck = () => svg([h('path', { d: 'M20 6 9 17l-5-5' })])
+const SvgKey = () =>
+  svg([
+    h('circle', { cx: 7.5, cy: 15.5, r: 4.5 }),
+    h('path', { d: 'm10.7 12.3 9.3-9.3' }),
+    h('path', { d: 'M18 5l2 2' }),
+    h('path', { d: 'M15 8l2 2' }),
+  ])
+const SvgBolt = () => svg([h('path', { d: 'M13 2 3 14h9l-1 8 10-12h-9l1-8z' })])
+const SvgWallet = () =>
+  svg([
+    h('path', { d: 'M21 12V7H5a2 2 0 0 1 0-4h14v4' }),
+    h('path', { d: 'M3 5v14a2 2 0 0 0 2 2h16v-5' }),
+    h('path', { d: 'M18 12a2 2 0 0 0 0 4h4v-4Z' }),
+  ])
+
+const steps = computed(() => [
+  { icon: SvgKey, title: t('home.landing.how.step1Title'), desc: t('home.landing.how.step1Desc') },
+  { icon: SvgBolt, title: t('home.landing.how.step2Title'), desc: t('home.landing.how.step2Desc') },
+  { icon: SvgWallet, title: t('home.landing.how.step3Title'), desc: t('home.landing.how.step3Desc') },
+])
+
+// Model facts stay literal (names, ids, prices); description + tags are localized.
+const modelDefs = [
+  { key: 'claudeOpus', name: 'Claude Opus', provider: 'anthropic/claude-opus',
+    context: '200K', priceIn: '$3.00 / M', priceOut: '$15.00 / M', tagKeys: ['vision', 'tools'], status: 'operational' },
+  { key: 'gpt5', name: 'GPT-5', provider: 'openai/gpt-5',
+    context: '256K', priceIn: '$2.50 / M', priceOut: '$10.00 / M', tagKeys: ['vision', 'tools'], status: 'new' },
+  { key: 'llama4', name: 'Llama 4 70B', provider: 'meta/llama-4-70b',
+    context: '128K', priceIn: '$0.30 / M', priceOut: '$0.40 / M', tagKeys: ['open'], status: 'operational' },
+  { key: 'gemini25', name: 'Gemini 2.5 Pro', provider: 'google/gemini-2.5-pro',
+    context: '1M', priceIn: '$1.25 / M', priceOut: '$5.00 / M', tagKeys: ['vision', 'audio'], status: 'operational' },
+  { key: 'mistralLarge', name: 'Mistral Large', provider: 'mistral/large',
+    context: '128K', priceIn: '$0.40 / M', priceOut: '$1.20 / M', tagKeys: ['tools'], status: 'operational' },
+  { key: 'deepseekR1', name: 'DeepSeek R1', provider: 'deepseek/r1',
+    context: '64K', priceIn: '$0.14 / M', priceOut: '$0.28 / M', tagKeys: ['reasoning', 'open'], status: 'degraded' },
+]
+const models = computed(() =>
+  modelDefs.map((m) => ({
+    ...m,
+    description: t(`home.landing.models.items.${m.key}.desc`),
+    tags: m.tagKeys.map((tk) => t(`home.landing.models.tags.${tk}`)),
+  }))
+)
+
+function statusLabel(status: string) {
+  if (status === 'new') return t('home.landing.models.status.new')
+  if (status === 'degraded') return t('home.landing.models.status.degraded')
+  return t('home.landing.models.status.operational')
+}
+function statusClass(status: string) {
+  if (status === 'new') return 'lp-badge-brand'
+  if (status === 'degraded') return 'lp-badge-warning'
+  return 'lp-badge-success'
+}
+
+const plans = computed(() =>
+  [
+    { key: 'payg', featured: false },
+    { key: 'team', featured: true },
+    { key: 'enterprise', featured: false },
+  ].map((p) => ({
+    name: t(`home.landing.pricing.${p.key}.name`),
+    price: t(`home.landing.pricing.${p.key}.price`),
+    note: t(`home.landing.pricing.${p.key}.note`),
+    cta: t(`home.landing.pricing.${p.key}.cta`),
+    feats: tArr(`home.landing.pricing.${p.key}.feats`),
+    featured: p.featured,
+  }))
+)
+
+const footerCols = computed(() => [
+  {
+    head: t('home.landing.footer.product'),
+    items: [
+      { label: t('home.landing.nav.models'), href: '#models' },
+      { label: t('home.landing.nav.pricing'), href: '#pricing' },
+      { label: t('home.landing.nav.how'), href: '#how' },
+      { label: t('home.landing.nav.signIn'), href: '/login' },
+    ],
+  },
+  {
+    head: t('home.landing.footer.developers'),
+    items: [
+      { label: t('home.landing.nav.docs'), href: docUrl.value || '#', external: !!docUrl.value },
+      { label: 'GitHub', href: githubUrl, external: true },
+    ],
+  },
+  {
+    head: t('home.landing.footer.company'),
+    items: [
+      { label: t('home.landing.footer.about'), href: '#top' },
+      { label: t('home.landing.footer.contact'), href: githubUrl, external: true },
+    ],
+  },
+])
 
 // Toggle theme
 function toggleTheme() {
@@ -481,164 +480,682 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Terminal Container */
-.terminal-container {
-  position: relative;
-  display: inline-block;
+/* kissopen marketing landing — driven by the global design tokens
+   (src/styles/kissopen-tokens.css). Semantic vars make the derived
+   dark variant work automatically. */
+.lp-root {
+  min-height: 100vh;
+  background: var(--surface-page);
+  color: var(--text-body);
+  font-family: var(--font-sans);
+}
+.lp-wrap {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 28px;
+}
+section {
+  scroll-margin-top: 80px;
 }
 
-/* Terminal Window */
-.terminal-window {
-  width: 420px;
-  background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
-  border-radius: 14px;
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-  transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
-  transition: transform 0.3s ease;
+/* ---- Nav ---- */
+.lp-nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--surface-page) 82%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
 }
-
-.terminal-window:hover {
-  transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(-4px);
-}
-
-/* Terminal Header */
-.terminal-header {
+.lp-navrow {
   display: flex;
   align-items: center;
-  padding: 12px 16px;
-  background: rgba(30, 41, 59, 0.8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  gap: 24px;
+  height: 64px;
 }
-
-.terminal-buttons {
+.lp-logo {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+}
+.lp-logo-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  object-fit: contain;
+}
+.lp-logo-mark {
+  font-weight: var(--weight-extra);
+  font-size: var(--text-lg);
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+}
+.lp-navnav {
+  display: flex;
+  gap: 22px;
+  margin-left: 8px;
+}
+.lp-navlink {
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.lp-navlink:hover {
+  color: var(--text-strong);
+}
+.lp-navactions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lp-signin {
+  font-weight: var(--weight-semibold);
+}
+.lp-icontoggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.lp-icontoggle:hover {
+  background: var(--surface-hover);
+  color: var(--text-strong);
+}
+@media (max-width: 760px) {
+  .lp-navnav {
+    display: none;
+  }
 }
 
-.terminal-buttons span {
-  width: 12px;
-  height: 12px;
+/* ---- Buttons ---- */
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  letter-spacing: -0.005em;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  padding: 0 18px;
+  height: 40px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.lp-btn:active {
+  transform: translateY(0.5px) scale(0.985);
+}
+.lp-btn :deep(svg) {
+  width: 1.05em;
+  height: 1.05em;
+}
+.lp-btn-sm {
+  height: 32px;
+  padding: 0 14px;
+  font-size: var(--text-xs);
+}
+.lp-btn-lg {
+  height: 48px;
+  padding: 0 24px;
+  font-size: var(--text-base);
+}
+.lp-btn-block {
+  display: flex;
+  width: 100%;
+}
+.lp-btn-primary {
+  background: var(--brand);
+  color: var(--text-on-brand);
+  box-shadow: var(--shadow-xs);
+}
+.lp-btn-primary:hover {
+  background: var(--brand-hover);
+  box-shadow: var(--shadow-brand);
+}
+.lp-btn-secondary {
+  background: var(--surface-card);
+  color: var(--text-strong);
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-xs);
+}
+.lp-btn-secondary:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+.lp-btn-ghost {
+  background: transparent;
+  color: var(--text-body);
+}
+.lp-btn-ghost:hover {
+  background: var(--surface-hover);
+}
+.lp-btn-gradient {
+  background: var(--grad-brand);
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+}
+.lp-btn-gradient:hover {
+  box-shadow: var(--shadow-brand);
+}
+
+/* ---- Badges ---- */
+.lp-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-2xs);
+  letter-spacing: 0.01em;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+.lp-badge-dot::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.lp-badge-brand {
+  background: var(--coral-50);
+  color: var(--coral-700);
+  border-color: var(--coral-200);
+}
+.lp-badge-pink {
+  background: var(--pink-50);
+  color: var(--pink-700);
+  border-color: var(--pink-200);
+}
+.lp-badge-success {
+  background: var(--success-bg);
+  color: var(--green-600);
+  border-color: transparent;
+}
+.lp-badge-warning {
+  background: var(--warning-bg);
+  color: var(--amber-600);
+  border-color: transparent;
+}
+.lp-badge-solid {
+  background: var(--brand);
+  color: #fff;
+  border-color: transparent;
+}
+.lp-badge-mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: var(--tracking-mono);
+}
+
+/* ---- Cards ---- */
+.lp-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-5);
+}
+.lp-card-hover {
+  transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out),
+    border-color var(--dur-base) var(--ease-out);
+}
+.lp-card-hover:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-color: var(--border-default);
+}
+
+/* ---- Typography helpers ---- */
+.lp-h2 {
+  font-weight: var(--weight-bold);
+  font-size: var(--text-2xl);
+  line-height: var(--leading-snug);
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+.lp-h3 {
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+  color: var(--text-strong);
+}
+.lp-lead {
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.lp-muted-sm {
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+.lp-center {
+  text-align: center;
+}
+.lp-grad-text {
+  background: var(--grad-brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---- Hero ---- */
+.lp-hero {
+  position: relative;
+  overflow: hidden;
+}
+.lp-bloom {
+  position: absolute;
+  pointer-events: none;
   border-radius: 50%;
 }
-
-.btn-close {
-  background: #ef4444;
+.lp-bloom-pink {
+  top: -180px;
+  right: -120px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(244, 154, 182, 0.3), transparent 62%);
 }
-.btn-minimize {
-  background: #eab308;
+.lp-bloom-coral {
+  top: -140px;
+  right: 60px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(242, 104, 92, 0.22), transparent 62%);
 }
-.btn-maximize {
-  background: #22c55e;
+.lp-hero-inner {
+  position: relative;
+  padding: 90px 28px 70px;
 }
-
-.terminal-title {
-  flex: 1;
-  text-align: center;
-  font-size: 12px;
-  font-family: ui-monospace, monospace;
-  color: #64748b;
-  margin-right: 52px;
+.lp-hero-title {
+  font-weight: var(--weight-extra);
+  font-size: var(--text-5xl);
+  letter-spacing: -0.03em;
+  line-height: 1.04;
+  margin: 20px 0 0;
+  max-width: 760px;
+  color: var(--text-strong);
 }
-
-/* Terminal Body */
-.terminal-body {
-  padding: 20px 24px;
-  font-family: ui-monospace, 'Fira Code', monospace;
-  font-size: 14px;
-  line-height: 2;
+.lp-hero-sub {
+  font-size: var(--text-md);
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 560px;
+  margin: 22px 0 30px;
 }
-
-.code-line {
+.lp-hero-cta {
   display: flex;
+  gap: 12px;
   align-items: center;
-  gap: 8px;
   flex-wrap: wrap;
-  opacity: 0;
-  animation: line-appear 0.5s ease forwards;
 }
-
-.line-1 {
-  animation-delay: 0.3s;
+.lp-stats {
+  display: flex;
+  gap: 22px;
+  margin-top: 34px;
+  flex-wrap: wrap;
 }
-.line-2 {
-  animation-delay: 1s;
+.lp-stat-num {
+  font-weight: var(--weight-extra);
+  font-size: var(--text-xl);
+  color: var(--text-strong);
 }
-.line-3 {
-  animation-delay: 1.8s;
+.lp-stat-label {
+  font-size: var(--text-xs);
+  color: var(--text-faint);
 }
-.line-4 {
-  animation-delay: 2.5s;
-}
-
-@keyframes line-appear {
-  from {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@media (max-width: 640px) {
+  .lp-hero-title {
+    font-size: var(--text-4xl);
   }
 }
 
-.code-prompt {
-  color: #22c55e;
-  font-weight: bold;
+/* ---- Logos strip ---- */
+.lp-logos {
+  padding: 8px 28px 56px;
 }
-.code-cmd {
-  color: #38bdf8;
+.lp-logos-eyebrow {
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  margin-bottom: 16px;
 }
-.code-flag {
-  color: #a78bfa;
+.lp-logos-row {
+  display: flex;
+  gap: 34px;
+  flex-wrap: wrap;
+  align-items: center;
 }
-.code-url {
-  color: #14b8a6;
+.lp-logos-name {
+  font-weight: var(--weight-bold);
+  font-size: var(--text-lg);
+  letter-spacing: -0.01em;
+  color: var(--warm-400);
 }
-.code-comment {
-  color: #64748b;
-  font-style: italic;
+
+/* ---- Bands / sections ---- */
+.lp-band {
+  background: var(--surface-card);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
 }
-.code-success {
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.15);
-  padding: 2px 8px;
-  border-radius: 4px;
+.lp-band-inner {
+  padding: 72px 28px;
+}
+.lp-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+@media (max-width: 880px) {
+  .lp-grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- How-it-works steps ---- */
+.lp-step {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lp-step-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-md);
+  background: var(--grad-brand-soft);
+  border: 1px solid var(--coral-200);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--coral-600);
+}
+.lp-step-icon :deep(svg) {
+  width: 22px;
+  height: 22px;
+}
+.lp-step .lp-h3 {
+  margin-top: 4px;
+}
+
+/* ---- Models ---- */
+.lp-models-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 26px;
+}
+.lp-model {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lp-model-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.lp-model-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warm-100);
+  color: var(--text-strong);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-md);
+}
+.lp-model-id {
+  flex: 1;
+  min-width: 0;
+}
+.lp-model-name {
+  font-weight: var(--weight-bold);
+  font-size: var(--text-md);
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+}
+.lp-model-provider {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-faint);
+}
+.lp-model-desc {
+  margin: 0;
+}
+.lp-model-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.lp-model-prices {
+  display: flex;
+  gap: 18px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+.lp-price-label {
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   font-weight: 600;
+  color: var(--text-faint);
 }
-.code-response {
-  color: #fbbf24;
+.lp-price-val {
+  font-family: var(--font-mono);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+  color: var(--text-strong);
 }
 
-/* Blinking Cursor */
-.cursor {
-  display: inline-block;
-  width: 8px;
+/* ---- Code section ---- */
+.lp-code-row {
+  padding: 72px 28px;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 48px;
+  align-items: center;
+}
+@media (max-width: 880px) {
+  .lp-code-row {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+.lp-code-h2 {
+  margin: 14px 0 12px;
+}
+.lp-code-lead {
+  margin-bottom: 18px;
+}
+.lp-code {
+  background: var(--warm-900);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  overflow-x: auto;
+}
+.lp-code-bar {
+  margin-bottom: 8px;
+}
+.lp-code-lang {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--warm-400);
+}
+.lp-code-pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: #f4edea;
+  white-space: pre;
+}
+.lp-c-kw {
+  color: var(--pink-300);
+}
+.lp-c-str {
+  color: #a7e0bd;
+}
+
+/* ---- Pricing ---- */
+.lp-pricing {
+  align-items: start;
+  margin-top: 40px;
+}
+.lp-plan {
+  position: relative;
+}
+.lp-plan-featured {
+  border-color: var(--coral-300);
+  box-shadow: var(--shadow-lg);
+}
+.lp-plan-tag {
+  position: absolute;
+  top: -11px;
+  left: 20px;
+}
+.lp-plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 10px 0 16px;
+}
+.lp-plan-amount {
+  font-weight: var(--weight-extra);
+  font-size: var(--text-3xl);
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+.lp-plan-note {
+  font-size: var(--text-sm);
+  color: var(--text-faint);
+}
+.lp-plan-feats {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 20px;
+}
+.lp-plan-feat {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--text-body);
+}
+.lp-check {
+  color: var(--success);
+  display: inline-flex;
+}
+.lp-check :deep(svg) {
+  width: 16px;
   height: 16px;
-  background: #22c55e;
-  animation: blink 1s step-end infinite;
 }
 
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0;
-  }
+/* ---- CTA ---- */
+.lp-cta-wrap {
+  padding: 20px 28px 80px;
+}
+.lp-cta {
+  background: var(--grad-brand);
+  border-radius: var(--radius-2xl);
+  padding: 56px 48px;
+  text-align: center;
+  box-shadow: var(--shadow-brand);
+}
+.lp-cta-title {
+  font-weight: var(--weight-extra);
+  font-size: var(--text-3xl);
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.lp-cta-sub {
+  font-size: var(--text-md);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 24px;
+}
+.lp-cta-btns {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.lp-cta-btn-light {
+  background: #fff;
+  color: var(--coral-600);
+}
+.lp-cta-btn-glass {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
 }
 
-/* Dark mode adjustments */
-:deep(.dark) .terminal-window {
-  box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.6),
-    0 0 0 1px rgba(20, 184, 166, 0.2),
-    0 0 40px rgba(20, 184, 166, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+/* ---- Footer ---- */
+.lp-footer {
+  border-top: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+}
+.lp-footer-grid {
+  padding: 48px 28px;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 760px) {
+  .lp-footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.lp-footer-tag {
+  font-size: var(--text-sm);
+  color: var(--text-faint);
+  margin-top: 12px;
+  max-width: 230px;
+}
+.lp-footer-head {
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-2xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+  margin-bottom: 12px;
+}
+.lp-footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.lp-footer-copy {
+  padding: 0 28px 32px;
+  font-size: var(--text-xs);
+  color: var(--text-faint);
 }
 </style>
