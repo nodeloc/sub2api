@@ -1,0 +1,233 @@
+/* kissopen design tokens — ported from the "kissopen Design System" project.
+   Warm coral + pink brand: coral #F2685C (primary), pink #F49AB6 (secondary),
+   meeting at the "kiss point" #EF8E88. Neutrals carry a faint warm tint so the
+   UI feels of-a-piece with the warm brand rather than clinical gray.
+
+   Loaded before style.css (see main.ts). The Tailwind palette in
+   tailwind.config.js is remapped to these same values so existing utility
+   classes (primary-*, gray-*, dark-*) pick up the brand automatically; these
+   CSS variables back the brand gradient, focus ring and any token-driven CSS.
+
+   Fonts are Google-Fonts stand-ins per the design system (no brand fonts were
+   supplied): Plus Jakarta Sans for UI/display, JetBrains Mono for keys/code. */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ---- Brand: Coral (primary) ---- */
+  --coral-50:  #FFF3F1;
+  --coral-100: #FFE3DE;
+  --coral-200: #FCC6BE;
+  --coral-300: #F7A096;
+  --coral-400: #F2685C; /* brand base */
+  --coral-500: #E55344;
+  --coral-600: #CB3D2F;
+  --coral-700: #A52F23;
+  --coral-800: #7E251C;
+  --coral-900: #561A14;
+
+  /* ---- Brand: Pink (secondary) ---- */
+  --pink-50:  #FFF4F7;
+  --pink-100: #FEE6EC;
+  --pink-200: #FBCDD9;
+  --pink-300: #F7AEC2;
+  --pink-400: #F49AB6; /* brand base */
+  --pink-500: #ED7A9C;
+  --pink-600: #DD557E;
+  --pink-700: #B83E62;
+  --pink-800: #8C2E4A;
+  --pink-900: #5E2032;
+
+  /* ---- The "kiss point" overlap ---- */
+  --lens-solid:  #EF8E88;
+  --lens-mid:    #FBB0B6;
+  --lens-soft:   #FFCDD2;
+
+  /* ---- Warm neutrals ---- */
+  --warm-0:   #FFFFFF;
+  --warm-25:  #FDFAF9; /* app background, warm paper */
+  --warm-50:  #FBF6F4;
+  --warm-100: #F4EDEA;
+  --warm-200: #E9DFDB;
+  --warm-300: #D8CBC6;
+  --warm-400: #B3A7A2;
+  --warm-500: #8A7E79;
+  --warm-600: #655B57;
+  --warm-700: #463E3B;
+  --warm-800: #2C2624;
+  --warm-900: #1B1614; /* near-black ink, warm */
+
+  /* ---- Functional accents ---- */
+  --green-100: #DCF3E4;
+  --green-500: #1F9D5B;
+  --green-600: #178049;
+  --amber-100: #FCEFD2;
+  --amber-500: #D99514;
+  --amber-600: #B5790C;
+  --red-100:   #FCE0DC;
+  --red-500:   #DA3B2A;
+  --red-600:   #B62D1F;
+  --blue-100:  #DCEBFB;
+  --blue-500:  #2C7CD6;
+  --blue-600:  #1F63B4;
+
+  /* ===== Semantic aliases ===== */
+  --brand:            var(--coral-400);
+  --brand-hover:      var(--coral-500);
+  --brand-press:      var(--coral-600);
+  --brand-subtle:     var(--coral-50);
+  --brand-subtle-bd:  var(--coral-200);
+  --brand-secondary:  var(--pink-400);
+
+  --text-strong:   var(--warm-900);
+  --text-body:     var(--warm-800);
+  --text-muted:    var(--warm-600);
+  --text-faint:    var(--warm-500);
+  --text-on-brand: #FFFFFF;
+  --text-link:     var(--coral-600);
+
+  --surface-page:    var(--warm-25);
+  --surface-card:    var(--warm-0);
+  --surface-sunken:  var(--warm-50);
+  --surface-raised:  var(--warm-0);
+  --surface-inverse: var(--warm-900);
+  --surface-hover:   var(--warm-100);
+
+  --border-subtle:  var(--warm-200);
+  --border-default: var(--warm-300);
+  --border-strong:  var(--warm-400);
+  --border-focus:   var(--coral-400);
+
+  --success: var(--green-500);
+  --success-bg: var(--green-100);
+  --warning: var(--amber-500);
+  --warning-bg: var(--amber-100);
+  --danger:  var(--red-500);
+  --danger-bg: var(--red-100);
+  --info:    var(--blue-500);
+  --info-bg: var(--blue-100);
+
+  /* Signature gradient — coral kissing pink */
+  --grad-brand: linear-gradient(105deg, var(--coral-400) 0%, var(--lens-solid) 48%, var(--pink-400) 100%);
+  --grad-brand-soft: linear-gradient(105deg, var(--coral-50) 0%, var(--pink-50) 100%);
+
+  /* ---- Typography ---- */
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --font-display: var(--font-sans);
+
+  /* Type scale — 1.25 major-third */
+  --text-2xs: 0.6875rem;  /* 11px */
+  --text-xs:  0.75rem;    /* 12px */
+  --text-sm:  0.875rem;   /* 14px */
+  --text-base:0.9375rem;  /* 15px — body default */
+  --text-md:  1.0625rem;  /* 17px */
+  --text-lg:  1.25rem;    /* 20px */
+  --text-xl:  1.5rem;     /* 24px */
+  --text-2xl: 1.9375rem;  /* 31px */
+  --text-3xl: 2.5rem;     /* 40px */
+  --text-4xl: 3.25rem;    /* 52px */
+  --text-5xl: 4.25rem;    /* 68px */
+
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+  --weight-extra:   800;
+
+  --leading-tight:   1.1;
+  --leading-snug:    1.25;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.65;
+
+  --tracking-tight:  -0.02em;
+  --tracking-snug:   -0.01em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.04em;
+  --tracking-mono:   0.01em;
+
+  /* ---- Spacing — 4px base grid ---- */
+  --space-0: 0;
+  --space-1: 0.25rem;  /* 4 */
+  --space-2: 0.5rem;   /* 8 */
+  --space-3: 0.75rem;  /* 12 */
+  --space-4: 1rem;     /* 16 */
+  --space-5: 1.25rem;  /* 20 */
+  --space-6: 1.5rem;   /* 24 */
+  --space-8: 2rem;     /* 32 */
+  --space-10:2.5rem;   /* 40 */
+  --space-12:3rem;     /* 48 */
+  --space-16:4rem;     /* 64 */
+  --space-20:5rem;     /* 80 */
+  --space-24:6rem;     /* 96 */
+
+  /* ---- Radius — soft & rounded; pill for primary actions ---- */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  22px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
+
+  /* ---- Shadows — warm-tinted, soft, low-spread ---- */
+  --shadow-xs: 0 1px 2px rgba(86, 26, 20, 0.06);
+  --shadow-sm: 0 1px 3px rgba(86, 26, 20, 0.07), 0 1px 2px rgba(86, 26, 20, 0.05);
+  --shadow-md: 0 4px 12px rgba(86, 26, 20, 0.08), 0 2px 4px rgba(86, 26, 20, 0.05);
+  --shadow-lg: 0 12px 28px rgba(86, 26, 20, 0.10), 0 4px 10px rgba(86, 26, 20, 0.06);
+  --shadow-xl: 0 24px 56px rgba(86, 26, 20, 0.14), 0 8px 18px rgba(86, 26, 20, 0.07);
+  --shadow-brand: 0 8px 24px rgba(242, 104, 92, 0.32);
+  --ring-focus: 0 0 0 3px rgba(242, 104, 92, 0.28);
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 320ms;
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+  --container-prose: 680px;
+  --sidebar-w: 248px;
+}
+
+/* ===== Derived warm dark variant =====
+   The source design system is light-only (warm paper). This dark theme is
+   derived from the warm neutral ramp + coral so dark mode stays on-brand:
+   warm near-black surfaces, coral lightened to coral-300 for contrast.
+   Applied via the `.dark` class set on <html> by main.ts. */
+.dark {
+  --brand:            var(--coral-400);
+  --brand-hover:      var(--coral-300);
+  --brand-press:      var(--coral-500);
+  --brand-subtle:     rgba(242, 104, 92, 0.16);
+  --brand-subtle-bd:  rgba(242, 104, 92, 0.35);
+
+  --text-strong:   var(--warm-50);
+  --text-body:     var(--warm-100);
+  --text-muted:    var(--warm-300);
+  --text-faint:    var(--warm-400);
+  --text-on-brand: #FFFFFF;
+  --text-link:     var(--coral-300);
+
+  --surface-page:    var(--warm-900);
+  --surface-card:    var(--warm-800);
+  --surface-sunken:  #211B19;
+  --surface-raised:  var(--warm-700);
+  --surface-inverse: var(--warm-0);
+  --surface-hover:   rgba(255, 255, 255, 0.05);
+
+  --border-subtle:  rgba(255, 255, 255, 0.08);
+  --border-default: rgba(255, 255, 255, 0.14);
+  --border-strong:  rgba(255, 255, 255, 0.22);
+  --border-focus:   var(--coral-400);
+
+  --grad-brand-soft: linear-gradient(105deg, rgba(242, 104, 92, 0.14) 0%, rgba(244, 154, 182, 0.14) 100%);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 24px 56px rgba(0, 0, 0, 0.6), 0 8px 18px rgba(0, 0, 0, 0.45);
+  --shadow-brand: 0 8px 24px rgba(242, 104, 92, 0.40);
+  --ring-focus: 0 0 0 3px rgba(242, 104, 92, 0.40);
+}

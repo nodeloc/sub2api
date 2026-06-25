@@ -1,0 +1,249 @@
+/* =============================================================================
+ * kissopen admin/app polish layer  —  FORK-LOCAL, additive.
+ * =============================================================================
+ * Goal: bring the admin backend (and the rest of the app) in line with the
+ * kissopen design WITHOUT editing upstream `.vue` views or `style.css`. This
+ * keeps `git pull` / fork-sync merges conflict-free: it's a single new file you
+ * own, imported once in main.ts AFTER style.css.
+ *
+ * How it works: these selectors match the app's OWN shared component classes
+ * (defined with @apply inside style.css's `@layer components`). Because the
+ * rules here are UNLAYERED, the CSS cascade gives them priority over any
+ * `@layer components` rule — so we restyle `.card`, `.input`, `.badge`, `.tab`,
+ * etc. globally, token-driven, with zero markup changes.
+ *
+ * Everything is expressed in design tokens (src/styles/kissopen-tokens.css) so
+ * the derived warm dark variant works automatically. To drop this layer, just
+ * remove the one import in main.ts.
+ * ========================================================================== */
+
+/* ---------------- Cards ---------------- */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.card-hover:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+  border-color: var(--border-default);
+}
+.card-header {
+  border-bottom: 1px solid var(--border-subtle);
+}
+.card-footer {
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---------------- Page header ---------------- */
+.page-title {
+  font-weight: var(--weight-extra);
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+.page-description {
+  color: var(--text-muted);
+}
+
+/* ---------------- Inputs ---------------- */
+.input {
+  border-radius: var(--radius-md);
+  border-color: var(--border-default);
+  background: var(--surface-card);
+  color: var(--text-strong);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.input::placeholder {
+  color: var(--text-faint);
+}
+.input:hover {
+  border-color: var(--border-strong);
+}
+.input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--ring-focus);
+}
+.input-label {
+  font-weight: var(--weight-semibold);
+  color: var(--text-strong);
+}
+.input-hint {
+  color: var(--text-faint);
+}
+
+/* ---------------- Badges (kissopen pill) ---------------- */
+.badge {
+  border-radius: var(--radius-pill);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+}
+.badge-primary {
+  background: var(--coral-50);
+  color: var(--coral-700);
+  border-color: var(--coral-200);
+}
+.badge-success {
+  background: var(--success-bg);
+  color: var(--green-600);
+}
+.badge-warning {
+  background: var(--warning-bg);
+  color: var(--amber-600);
+}
+.badge-danger {
+  background: var(--danger-bg);
+  color: var(--red-600);
+}
+.badge-gray {
+  background: var(--surface-sunken);
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+}
+.badge-purple {
+  background: var(--pink-50);
+  color: var(--pink-700);
+  border-color: var(--pink-200);
+}
+
+/* ---------------- Tabs (kissopen pill group) ---------------- */
+.tabs {
+  display: inline-flex;
+  gap: 2px;
+  padding: 4px;
+  background: var(--surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+}
+.tab {
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  font-weight: var(--weight-semibold);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.tab:hover {
+  color: var(--text-strong);
+}
+.tab-active {
+  background: var(--surface-card);
+  color: var(--brand);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ---------------- Stat helpers (kissopen StatTile feel) ---------------- */
+.stat-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.stat-icon {
+  border-radius: var(--radius-md);
+}
+.stat-icon-primary {
+  background: var(--grad-brand-soft);
+  color: var(--coral-600);
+}
+.stat-value {
+  font-weight: var(--weight-extra);
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+}
+.stat-label {
+  color: var(--text-faint);
+}
+
+/* ---------------- Tables ---------------- */
+.table-container {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+.table th {
+  background: var(--surface-sunken);
+  color: var(--text-faint);
+  font-weight: var(--weight-semibold);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.table td {
+  color: var(--text-body);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.table tbody tr {
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+/* ---------------- Sidebar (shared AppLayout) ---------------- */
+.sidebar {
+  background: var(--surface-card);
+  border-right: 1px solid var(--border-subtle);
+}
+.sidebar-link {
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.sidebar-link:hover {
+  background: var(--surface-hover);
+  color: var(--text-strong);
+}
+.sidebar-link-active,
+.sidebar-link-active:hover {
+  background: var(--coral-50);
+  color: var(--coral-700);
+}
+.sidebar-section-title {
+  color: var(--text-faint);
+}
+
+/* ---------------- Dropdowns / menus ---------------- */
+.dropdown {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+.dropdown-item {
+  color: var(--text-body);
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.dropdown-item:hover {
+  background: var(--surface-hover);
+}
+
+/* ---------------- Modals / dialogs ---------------- */
+.modal-content,
+.dialog-container {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+}
+.modal-header,
+.dialog-header {
+  border-bottom: 1px solid var(--border-subtle);
+}
+.modal-footer,
+.dialog-footer {
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ---------------- Misc ---------------- */
+.divider {
+  background: var(--border-subtle);
+}
+.empty-state-title {
+  color: var(--text-strong);
+}
+.empty-state-description {
+  color: var(--text-muted);
+}
+.skeleton {
+  background: var(--surface-sunken);
+}

@@ -4,7 +4,15 @@ import App from './App.vue'
 import router from './router'
 import i18n, { initI18n } from './i18n'
 import { useAppStore } from '@/stores/app'
+import './styles/kissopen-tokens.css'
 import './style.css'
+// kissopen kit component classes (ko-*), used by the design-derived user pages.
+// Loaded globally so those pages are styled on real routes, not just demos.
+import './styles/kit-components.css'
+// Fork-local kissopen polish for shared component classes (admin + app).
+// Imported AFTER style.css so its unlayered rules override @layer components,
+// with zero edits to upstream views — keeps fork-sync merges conflict-free.
+import './styles/kissopen-admin.css'
 
 function initThemeClass() {
   const savedTheme = localStorage.getItem('theme')

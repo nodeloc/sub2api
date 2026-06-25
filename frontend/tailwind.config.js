@@ -5,51 +5,93 @@ export default {
   theme: {
     extend: {
       colors: {
-        // 主色调 - Teal/Cyan 青色系
+        // 主色调 - kissopen Coral 珊瑚红 (brand base #F2685C)
         primary: {
-          50: '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
-          950: '#042f2e'
+          50: '#FFF3F1',
+          100: '#FFE3DE',
+          200: '#FCC6BE',
+          300: '#F7A096',
+          400: '#F2685C',
+          500: '#E55344',
+          600: '#CB3D2F',
+          700: '#A52F23',
+          800: '#7E251C',
+          900: '#561A14',
+          950: '#3A110D'
         },
-        // 辅助色 - 深蓝灰
+        // 次品牌色 - kissopen Pink 粉 (brand base #F49AB6)
+        secondary: {
+          50: '#FFF4F7',
+          100: '#FEE6EC',
+          200: '#FBCDD9',
+          300: '#F7AEC2',
+          400: '#F49AB6',
+          500: '#ED7A9C',
+          600: '#DD557E',
+          700: '#B83E62',
+          800: '#8C2E4A',
+          900: '#5E2032',
+          950: '#3E1421'
+        },
+        pink: {
+          50: '#FFF4F7',
+          100: '#FEE6EC',
+          200: '#FBCDD9',
+          300: '#F7AEC2',
+          400: '#F49AB6',
+          500: '#ED7A9C',
+          600: '#DD557E',
+          700: '#B83E62',
+          800: '#8C2E4A',
+          900: '#5E2032',
+          950: '#3E1421'
+        },
+        // 暖中性灰 - kissopen warm neutrals (warm red-brown tint)
+        gray: {
+          50: '#FBF6F4',
+          100: '#F4EDEA',
+          200: '#E9DFDB',
+          300: '#D8CBC6',
+          400: '#B3A7A2',
+          500: '#8A7E79',
+          600: '#655B57',
+          700: '#463E3B',
+          800: '#2C2624',
+          900: '#1B1614',
+          950: '#120E0D'
+        },
+        // 辅助色 - 暖中性 (warm neutrals)
         accent: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617'
+          50: '#FBF6F4',
+          100: '#F4EDEA',
+          200: '#E9DFDB',
+          300: '#D8CBC6',
+          400: '#B3A7A2',
+          500: '#8A7E79',
+          600: '#655B57',
+          700: '#463E3B',
+          800: '#2C2624',
+          900: '#1B1614',
+          950: '#120E0D'
         },
-        // 深色模式背景
+        // 深色模式背景 - 暖近黑 (warm near-black)
         dark: {
-          50: '#f8fafc',
-          100: '#f1f5f9',
-          200: '#e2e8f0',
-          300: '#cbd5e1',
-          400: '#94a3b8',
-          500: '#64748b',
-          600: '#475569',
-          700: '#334155',
-          800: '#1e293b',
-          900: '#0f172a',
-          950: '#020617'
+          50: '#FBF6F4',
+          100: '#F4EDEA',
+          200: '#E9DFDB',
+          300: '#D8CBC6',
+          400: '#B3A7A2',
+          500: '#8A7E79',
+          600: '#655B57',
+          700: '#463E3B',
+          800: '#2C2624',
+          900: '#1B1614',
+          950: '#120E0D'
         }
       },
       fontFamily: {
         sans: [
+          'Plus Jakarta Sans',
           'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
@@ -62,25 +104,27 @@ export default {
           'Microsoft YaHei',
           'sans-serif'
         ],
-        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
+        mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
       },
       boxShadow: {
-        glass: '0 8px 32px rgba(0, 0, 0, 0.08)',
-        'glass-sm': '0 4px 16px rgba(0, 0, 0, 0.06)',
-        glow: '0 0 20px rgba(20, 184, 166, 0.25)',
-        'glow-lg': '0 0 40px rgba(20, 184, 166, 0.35)',
-        card: '0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06)',
-        'card-hover': '0 10px 40px rgba(0, 0, 0, 0.08)',
+        // 暖色调阴影 - warm-tinted (shadow color rgba(86,26,20,…), not gray)
+        glass: '0 8px 32px rgba(86, 26, 20, 0.08)',
+        'glass-sm': '0 4px 16px rgba(86, 26, 20, 0.06)',
+        glow: '0 8px 24px rgba(242, 104, 92, 0.32)',
+        'glow-lg': '0 12px 36px rgba(242, 104, 92, 0.40)',
+        card: '0 1px 3px rgba(86, 26, 20, 0.07), 0 1px 2px rgba(86, 26, 20, 0.05)',
+        'card-hover': '0 12px 28px rgba(86, 26, 20, 0.10), 0 4px 10px rgba(86, 26, 20, 0.06)',
         'inner-glow': 'inset 0 1px 0 rgba(255, 255, 255, 0.1)'
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-primary': 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)',
-        'gradient-dark': 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
+        // 招牌渐变 - coral kissing pink at 105°
+        'gradient-primary': 'linear-gradient(105deg, #F2685C 0%, #EF8E88 48%, #F49AB6 100%)',
+        'gradient-dark': 'linear-gradient(135deg, #2C2624 0%, #1B1614 100%)',
         'gradient-glass':
           'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
         'mesh-gradient':
-          'radial-gradient(at 40% 20%, rgba(20, 184, 166, 0.12) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(20, 184, 166, 0.08) 0px, transparent 50%)'
+          'radial-gradient(at 40% 20%, rgba(242, 104, 92, 0.12) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(244, 154, 182, 0.10) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(239, 142, 136, 0.08) 0px, transparent 50%)'
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-out',
@@ -118,8 +162,8 @@ export default {
           '100%': { backgroundPosition: '200% 0' }
         },
         glow: {
-          '0%': { boxShadow: '0 0 20px rgba(20, 184, 166, 0.25)' },
-          '100%': { boxShadow: '0 0 30px rgba(20, 184, 166, 0.4)' }
+          '0%': { boxShadow: '0 0 20px rgba(242, 104, 92, 0.25)' },
+          '100%': { boxShadow: '0 0 30px rgba(242, 104, 92, 0.4)' }
         }
       },
       backdropBlur: {
