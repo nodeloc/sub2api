@@ -176,7 +176,12 @@ func (r *ModelPricingResolver) applyTokenOverrides(chPricing *ChannelModelPricin
 	if chPricing.CacheWritePrice != nil {
 		resolved.BasePricing.CacheCreationPricePerToken = *chPricing.CacheWritePrice
 		resolved.BasePricing.CacheCreation5mPrice = *chPricing.CacheWritePrice
-		resolved.BasePricing.CacheCreation1hPrice = *chPricing.CacheWritePrice
+		// Claude 式两档缓存写：1h TTL 价格独立配置（= 2x 输入）；未配置时回退到 5m 价格。
+		if chPricing.CacheWrite1hPrice != nil {
+			resolved.BasePricing.CacheCreation1hPrice = *chPricing.CacheWrite1hPrice
+		} else {
+			resolved.BasePricing.CacheCreation1hPrice = *chPricing.CacheWritePrice
+		}
 	}
 	if chPricing.CacheReadPrice != nil {
 		resolved.BasePricing.CacheReadPricePerToken = *chPricing.CacheReadPrice

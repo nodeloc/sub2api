@@ -727,7 +727,12 @@ func (s *BillingService) GetModelPricingWithChannel(model string, channelPricing
 	if channelPricing.CacheWritePrice != nil {
 		pricing.CacheCreationPricePerToken = *channelPricing.CacheWritePrice
 		pricing.CacheCreation5mPrice = *channelPricing.CacheWritePrice
-		pricing.CacheCreation1hPrice = *channelPricing.CacheWritePrice
+		// Claude 式两档缓存写：1h TTL 独立价格（= 2x 输入）；未配置时回退到 5m 价格。
+		if channelPricing.CacheWrite1hPrice != nil {
+			pricing.CacheCreation1hPrice = *channelPricing.CacheWrite1hPrice
+		} else {
+			pricing.CacheCreation1hPrice = *channelPricing.CacheWritePrice
+		}
 	}
 	if channelPricing.CacheReadPrice != nil {
 		pricing.CacheReadPricePerToken = *channelPricing.CacheReadPrice

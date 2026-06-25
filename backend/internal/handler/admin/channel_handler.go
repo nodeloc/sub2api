@@ -63,6 +63,7 @@ type channelModelPricingRequest struct {
 	InputPrice       *float64                 `json:"input_price" binding:"omitempty,min=0"`
 	OutputPrice      *float64                 `json:"output_price" binding:"omitempty,min=0"`
 	CacheWritePrice  *float64                 `json:"cache_write_price" binding:"omitempty,min=0"`
+	CacheWrite1hPrice *float64                `json:"cache_write_1h_price" binding:"omitempty,min=0"`
 	CacheReadPrice   *float64                 `json:"cache_read_price" binding:"omitempty,min=0"`
 	ImageOutputPrice *float64                 `json:"image_output_price" binding:"omitempty,min=0"`
 	PerRequestPrice  *float64                 `json:"per_request_price" binding:"omitempty,min=0"`
@@ -114,6 +115,7 @@ type channelModelPricingResponse struct {
 	InputPrice       *float64                  `json:"input_price"`
 	OutputPrice      *float64                  `json:"output_price"`
 	CacheWritePrice  *float64                  `json:"cache_write_price"`
+	CacheWrite1hPrice *float64                 `json:"cache_write_1h_price"`
 	CacheReadPrice   *float64                  `json:"cache_read_price"`
 	ImageOutputPrice *float64                  `json:"image_output_price"`
 	PerRequestPrice  *float64                  `json:"per_request_price"`
@@ -221,6 +223,7 @@ func pricingToResponse(p *service.ChannelModelPricing) channelModelPricingRespon
 		InputPrice:       p.InputPrice,
 		OutputPrice:      p.OutputPrice,
 		CacheWritePrice:  p.CacheWritePrice,
+		CacheWrite1hPrice: p.CacheWrite1hPrice,
 		CacheReadPrice:   p.CacheReadPrice,
 		ImageOutputPrice: p.ImageOutputPrice,
 		PerRequestPrice:  p.PerRequestPrice,
@@ -272,6 +275,7 @@ func pricingRequestToService(reqs []channelModelPricingRequest) []service.Channe
 			InputPrice:       r.InputPrice,
 			OutputPrice:      r.OutputPrice,
 			CacheWritePrice:  r.CacheWritePrice,
+			CacheWrite1hPrice: r.CacheWrite1hPrice,
 			CacheReadPrice:   r.CacheReadPrice,
 			ImageOutputPrice: r.ImageOutputPrice,
 			PerRequestPrice:  r.PerRequestPrice,

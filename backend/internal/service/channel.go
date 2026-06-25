@@ -80,7 +80,8 @@ type ChannelModelPricing struct {
 	BillingMode      BillingMode       // 计费模式
 	InputPrice       *float64          // 每 token 输入价格（USD）— 向后兼容 flat 定价
 	OutputPrice      *float64          // 每 token 输出价格（USD）
-	CacheWritePrice  *float64          // 缓存写入价格
+	CacheWritePrice  *float64          // 缓存写入价格（5 分钟 TTL，Claude 式 = 1.25x 输入）
+	CacheWrite1hPrice *float64         // 1 小时 TTL 缓存写入价格（Claude 式 = 2x 输入）；为空时回退到 CacheWritePrice
 	CacheReadPrice   *float64          // 缓存读取价格
 	ImageOutputPrice *float64          // 图片输出价格（向后兼容）
 	PerRequestPrice  *float64          // 默认按次计费价格（USD）
