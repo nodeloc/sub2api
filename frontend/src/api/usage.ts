@@ -256,6 +256,34 @@ export async function getDashboardModels(params?: {
   return data
 }
 
+/** One grouped row from the by-dimension usage aggregation (Activity → Explore). */
+export interface UsageAggregateRow {
+  key: string
+  label: string
+  requests: number
+  total_tokens: number
+  cost: number
+  actual_cost: number
+}
+export interface UsageAggregateResponse {
+  dimension: string
+  rows: UsageAggregateRow[]
+  start_date: string
+  end_date: string
+}
+/**
+ * Aggregate the current user's usage grouped by a dimension over a date range.
+ * @param params dimension: 'model' | 'api_key' | 'provider'
+ */
+export async function getUsageAggregate(params: {
+  dimension: string
+  start_date?: string
+  end_date?: string
+}): Promise<UsageAggregateResponse> {
+  const { data } = await apiClient.get<UsageAggregateResponse>('/usage/dashboard/aggregate', { params })
+  return data
+}
+
 /**
  * Get daily usage details for one API key owned by the current user.
  * @param apiKeyId - API key ID
@@ -334,6 +362,7 @@ export const usageAPI = {
   getDashboardStats,
   getDashboardTrend,
   getDashboardModels,
+  getUsageAggregate,
   getMyApiKeyDailyUsage,
   getDashboardApiKeysUsage,
   // Error requests

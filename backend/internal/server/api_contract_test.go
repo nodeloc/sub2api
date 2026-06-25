@@ -2485,6 +2485,10 @@ func (r *stubUsageLogRepo) GetUserModelStats(ctx context.Context, userID int64, 
 	return nil, errors.New("not implemented")
 }
 
+func (r *stubUsageLogRepo) GetUserUsageAggregate(ctx context.Context, userID int64, startTime, endTime time.Time, dimension string) ([]usagestats.UsageAggregateRow, error) {
+	return nil, errors.New("not implemented")
+}
+
 func (r *stubUsageLogRepo) ListWithFilters(ctx context.Context, params pagination.PaginationParams, filters usagestats.UsageLogFilters) ([]service.UsageLog, *pagination.PaginationResult, error) {
 	logs := r.userLogs[filters.UserID]
 
