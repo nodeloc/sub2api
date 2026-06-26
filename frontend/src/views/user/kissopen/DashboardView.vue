@@ -49,7 +49,7 @@
           <div>
             <div class="ko-dash__section-head">
               <h3 class="ko-dash__h3">{{ t('dashboard.recentRequests') }}</h3>
-              <router-link to="/usage" class="ko-dash__link">{{ t('dashboard.viewAllUsage') }}</router-link>
+              <router-link to="/logs" class="ko-dash__link">{{ t('dashboard.viewAllUsage') }}</router-link>
             </div>
             <div class="card ko-dash__flush">
               <div v-if="!recentUsage.length" class="ko-dash__empty">{{ t('dashboard.noUsageRecords') }}</div>
@@ -71,14 +71,14 @@
           <div>
             <div class="ko-dash__section-head">
               <h3 class="ko-dash__h3">{{ t('dashboard.yourModels') }}</h3>
-              <router-link to="/usage" class="ko-dash__link">{{ t('dashboard.viewUsage') }}</router-link>
+              <router-link to="/logs" class="ko-dash__link">{{ t('dashboard.viewUsage') }}</router-link>
             </div>
             <div class="card ko-dash__flush">
               <div v-if="!topModels.length" class="ko-dash__empty">{{ t('dashboard.noUsageRecords') }}</div>
               <router-link
                 v-for="(m, i) in topModels"
                 :key="m.model"
-                to="/usage"
+                to="/logs"
                 class="ko-dash__model"
                 :class="{ 'ko-dash__model--bd': i > 0 }"
               >
@@ -100,7 +100,7 @@
               <span>{{ t('dashboard.createApiKey') }}</span>
               <component :is="icons.Arrow" :size="14" class="ko-dash__qa-arrow" />
             </router-link>
-            <router-link to="/usage" class="ko-dash__qa">
+            <router-link to="/logs" class="ko-dash__qa">
               <span class="ko-dash__qa-ic"><component :is="icons.Chart" :size="16" /></span>
               <span>{{ t('dashboard.viewUsage') }}</span>
               <component :is="icons.Arrow" :size="14" class="ko-dash__qa-arrow" />

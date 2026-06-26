@@ -24,7 +24,7 @@
         <router-link
           v-for="(m, i) in ranked"
           :key="m.model"
-          :to="`/usage`"
+          :to="`/logs`"
           class="card kr-row"
         >
           <span class="kr-row__num" :class="{ 'kr-row__num--top': i < 3 }">{{ i + 1 }}</span>

@@ -19,7 +19,7 @@
         />
       </button>
 
-      <button @click="router.push('/usage')" class="qa-action group">
+      <button @click="router.push('/logs')" class="qa-action group">
         <div class="qa-chip flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-primary-100 dark:bg-primary-900/30">
           <Icon name="chart" size="lg" class="text-primary-600 dark:text-primary-400" />
         </div>

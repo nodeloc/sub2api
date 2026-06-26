@@ -31,7 +31,7 @@
           </div>
         </div>
 
-        <router-link to="/usage" class="ru-all group flex items-center justify-center gap-2 py-3 text-sm font-medium text-primary-600 dark:text-primary-400">
+        <router-link to="/logs" class="ru-all group flex items-center justify-center gap-2 py-3 text-sm font-medium text-primary-600 dark:text-primary-400">
           {{ t('dashboard.viewAllUsage') }}
           <Icon name="arrowRight" size="sm" class="ru-all__arrow" />
         </router-link>
