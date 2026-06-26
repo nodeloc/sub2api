@@ -2466,6 +2466,14 @@ func (s *GatewayService) resolveMultiPlatformOverride(ctx context.Context, group
 	return resolved
 }
 
+// ResolvePlatformForModel maps a requested model to its upstream platform for
+// multi-platform groups (channel-pricing platform first, then a model-name
+// heuristic). Returns "" when undetermined. Used by the route-dispatch middleware
+// so the chosen forwarder and the selected account share one platform decision.
+func (s *GatewayService) ResolvePlatformForModel(ctx context.Context, groupID int64, model string) string {
+	return s.platformForModel(ctx, groupID, model)
+}
+
 // platformForModel maps a requested model to its upstream platform for
 // multi-platform groups: the data-driven channel-pricing platform first, then a
 // model-name heuristic. Returns "" when the platform cannot be determined.
@@ -2495,7 +2503,9 @@ func platformFromModelName(model string) string {
 		return PlatformGemini
 	case strings.Contains(m, "gpt"), strings.Contains(m, "chatgpt"),
 		strings.Contains(m, "codex"), strings.HasPrefix(m, "o1"),
-		strings.HasPrefix(m, "o3"), strings.HasPrefix(m, "o4"):
+		strings.HasPrefix(m, "o3"), strings.HasPrefix(m, "o4"),
+		strings.Contains(m, "text-embedding"), strings.Contains(m, "dall-e"),
+		strings.Contains(m, "whisper"), strings.HasPrefix(m, "text-moderation"):
 		return PlatformOpenAI
 	default:
 		return ""
