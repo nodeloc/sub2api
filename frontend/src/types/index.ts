@@ -560,6 +560,7 @@ export interface AdminGroup extends Group {
 export interface ModelsListConfig {
   enabled: boolean
   models: string[]
+  multi_platform?: boolean
 }
 
 export interface ApiKey {

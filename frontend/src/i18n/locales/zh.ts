@@ -2613,6 +2613,10 @@ export default {
         finalPricePreview: '最终单张价格预览',
         notConfigured: '未配置'
       },
+      multiPlatform: {
+        title: '多平台路由（一个 key 调用全部模型）',
+        hint: '让同一个 API key 按请求的模型名路由到对应上游平台（Claude → Anthropic，GPT → OpenAI，Gemini → Google）。需在本分组下挂上各平台的账号。'
+      },
       modelsList: {
         title: '自定义 /v1/models 模型列表',
         hint: '仅影响 /v1/models 展示结果，不影响白名单模型调用和账号调度。',

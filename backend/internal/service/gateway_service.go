@@ -1582,6 +1582,7 @@ func (s *GatewayService) SelectAccountForModelWithExclusions(ctx context.Context
 		groupID = resolvedGroupID
 		ctx = s.withGroupContext(ctx, group)
 		platform = group.Platform
+		platform = s.resolveMultiPlatformOverride(ctx, group, groupID, requestedModel, platform, hasForcePlatform)
 	} else {
 		// 无分组时只使用原生 anthropic 平台
 		platform = PlatformAnthropic
@@ -1735,6 +1736,7 @@ func (s *GatewayService) SelectAccountWithLoadAwareness(ctx context.Context, gro
 	if err != nil {
 		return nil, err
 	}
+	platform = s.resolveMultiPlatformOverride(ctx, group, groupID, requestedModel, platform, hasForcePlatform)
 	preferOAuth := platform == PlatformGemini
 	if s.debugModelRoutingEnabled() && platform == PlatformAnthropic && requestedModel != "" {
 		logger.LegacyPrintf("service.gateway", "[ModelRoutingDebug] load-aware enabled: group_id=%v model=%s session=%s platform=%s", derefGroupID(groupID), requestedModel, shortSessionHash(sessionHash), platform)
@@ -2441,6 +2443,63 @@ func (s *GatewayService) resolvePlatform(ctx context.Context, groupID *int64, gr
 		return group.Platform, false, nil
 	}
 	return PlatformAnthropic, false, nil
+}
+
+// resolveMultiPlatformOverride implements cross-platform routing for groups with
+// ModelsListConfig.MultiPlatform enabled. Instead of pinning account selection to
+// the group's single platform, it resolves the target platform from the requested
+// model so one API key can reach Anthropic + OpenAI + Gemini accounts in the same
+// group. Force-platform mode (the /antigravity route) and non-multi-platform
+// groups are returned unchanged.
+func (s *GatewayService) resolveMultiPlatformOverride(ctx context.Context, group *Group, groupID *int64, requestedModel, platform string, hasForcePlatform bool) string {
+	if hasForcePlatform || group == nil || !group.ModelsListConfig.MultiPlatform || strings.TrimSpace(requestedModel) == "" {
+		return platform
+	}
+	resolved := s.platformForModel(ctx, derefGroupID(groupID), requestedModel)
+	if resolved == "" {
+		return platform
+	}
+	if resolved != platform && s.debugModelRoutingEnabled() {
+		logger.LegacyPrintf("service.gateway", "[ModelRoutingDebug] multi-platform route: group_id=%v model=%s %s -> %s",
+			derefGroupID(groupID), requestedModel, platform, resolved)
+	}
+	return resolved
+}
+
+// platformForModel maps a requested model to its upstream platform for
+// multi-platform groups: the data-driven channel-pricing platform first, then a
+// model-name heuristic. Returns "" when the platform cannot be determined.
+func (s *GatewayService) platformForModel(ctx context.Context, groupID int64, model string) string {
+	if s.channelService != nil && groupID != 0 {
+		if cp := s.channelService.GetChannelModelPricing(ctx, groupID, model); cp != nil {
+			if p := strings.TrimSpace(cp.Platform); p != "" {
+				return p
+			}
+		}
+	}
+	return platformFromModelName(model)
+}
+
+// platformFromModelName classifies a model name into one of the gateway's upstream
+// platforms (anthropic / openai / gemini). deepseek, qwen, … are served through
+// OpenAI-compatible accounts, so they fall under openai. Returns "" when unknown
+// so the caller keeps the group's default platform.
+func platformFromModelName(model string) string {
+	m := strings.ToLower(strings.TrimSpace(model))
+	switch {
+	case m == "":
+		return ""
+	case strings.Contains(m, "claude"):
+		return PlatformAnthropic
+	case strings.Contains(m, "gemini"):
+		return PlatformGemini
+	case strings.Contains(m, "gpt"), strings.Contains(m, "chatgpt"),
+		strings.Contains(m, "codex"), strings.HasPrefix(m, "o1"),
+		strings.HasPrefix(m, "o3"), strings.HasPrefix(m, "o4"):
+		return PlatformOpenAI
+	default:
+		return ""
+	}
 }
 
 func (s *GatewayService) listSchedulableAccounts(ctx context.Context, groupID *int64, platform string, hasForcePlatform bool) ([]Account, bool, error) {

@@ -1,6 +1,9 @@
 export interface ModelsListConfig {
   enabled: boolean
   models: string[]
+  // Cross-platform router: route one API key to the right upstream platform
+  // (Anthropic / OpenAI / Gemini) per requested model.
+  multi_platform?: boolean
 }
 
 export interface ModelsListItem {
@@ -10,6 +13,7 @@ export interface ModelsListItem {
 
 export interface ModelsListState {
   enabled: boolean
+  multiPlatform: boolean
   savedModels: string[]
   items: ModelsListItem[]
 }
@@ -18,6 +22,7 @@ export const createModelsListState = (
   config?: Partial<ModelsListConfig> | null,
 ): ModelsListState => ({
   enabled: config?.enabled ?? false,
+  multiPlatform: config?.multi_platform ?? false,
   savedModels: normalizeModels(config?.models ?? []),
   items: [],
 })
@@ -101,6 +106,7 @@ export const moveModelsListItem = (
 
 export const buildModelsListConfig = (state: ModelsListState): ModelsListConfig => ({
   enabled: state.enabled,
+  multi_platform: state.multiPlatform,
   models: state.items.length > 0
     ? state.items.filter(item => item.selected).map(item => item.id)
     : [...state.savedModels],

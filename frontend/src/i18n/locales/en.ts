@@ -2530,6 +2530,10 @@ export default {
         finalPricePreview: 'Final per-image price preview',
         notConfigured: 'Not configured'
       },
+      multiPlatform: {
+        title: 'Multi-platform routing (one key, all models)',
+        hint: 'Route a single API key to the right upstream platform per requested model (Claude → Anthropic, GPT → OpenAI, Gemini → Google). Assign accounts of each platform to this group.'
+      },
       modelsList: {
         title: 'Custom /v1/models Model List',
         hint: 'Only changes the /v1/models response. Whitelist model calls and account routing are unchanged.',

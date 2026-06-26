@@ -647,6 +647,36 @@
         </div>
 
         <div class="border-t pt-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ t("admin.groups.multiPlatform.title") }}
+              </label>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {{ t("admin.groups.multiPlatform.hint") }}
+              </p>
+            </div>
+            <button
+              type="button"
+              @click="createModelsListState.multiPlatform = !createModelsListState.multiPlatform"
+              :class="[
+                'relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors',
+                createModelsListState.multiPlatform
+                  ? 'bg-primary-500'
+                  : 'bg-gray-300 dark:bg-dark-600',
+              ]"
+            >
+              <span
+                :class="[
+                  'inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform',
+                  createModelsListState.multiPlatform ? 'translate-x-6' : 'translate-x-1',
+                ]"
+              />
+            </button>
+          </div>
+        </div>
+
+        <div class="border-t pt-4">
           <div class="mb-3 flex items-center justify-between gap-3">
             <div>
               <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -1931,6 +1961,36 @@
                 :placeholder="t('admin.groups.subscription.noLimit')"
               />
             </div>
+          </div>
+        </div>
+
+        <div class="border-t pt-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ t("admin.groups.multiPlatform.title") }}
+              </label>
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                {{ t("admin.groups.multiPlatform.hint") }}
+              </p>
+            </div>
+            <button
+              type="button"
+              @click="editModelsListState.multiPlatform = !editModelsListState.multiPlatform"
+              :class="[
+                'relative inline-flex h-6 w-11 flex-shrink-0 items-center rounded-full transition-colors',
+                editModelsListState.multiPlatform
+                  ? 'bg-primary-500'
+                  : 'bg-gray-300 dark:bg-dark-600',
+              ]"
+            >
+              <span
+                :class="[
+                  'inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform',
+                  editModelsListState.multiPlatform ? 'translate-x-6' : 'translate-x-1',
+                ]"
+              />
+            </button>
           </div>
         </div>
 
@@ -3567,6 +3627,7 @@ const resetModelsListState = (
 ) => {
   const fresh = createInitialModelsListState(config);
   state.enabled = fresh.enabled;
+  state.multiPlatform = fresh.multiPlatform;
   state.savedModels = fresh.savedModels;
   state.items = fresh.items;
 };
