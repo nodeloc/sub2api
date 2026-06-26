@@ -90,15 +90,21 @@ const isSearchable = computed(() => {
 // Filter groups by platform if specified
 const filteredGroups = computed(() => {
   let result: AdminGroup[] = props.groups
+  // 多平台路由分组接受任意平台的账号，所以对所有 platform 都应可选
+  const isMultiPlatform = (g: AdminGroup) => !!g.models_list_config?.multi_platform
   if (props.platform) {
     // antigravity 账户启用混合调度后，可选择 anthropic/gemini 分组
     if (props.platform === 'antigravity' && props.mixedScheduling) {
       result = result.filter(
-        (g) => g.platform === 'antigravity' || g.platform === 'anthropic' || g.platform === 'gemini'
+        (g) =>
+          g.platform === 'antigravity' ||
+          g.platform === 'anthropic' ||
+          g.platform === 'gemini' ||
+          isMultiPlatform(g)
       )
     } else {
-      // 默认：只能选择同 platform 的分组
-      result = result.filter((g) => g.platform === props.platform)
+      // 默认：同 platform 的分组，外加多平台路由分组
+      result = result.filter((g) => g.platform === props.platform || isMultiPlatform(g))
     }
   }
   if (isSearchable.value && searchText.value) {
