@@ -52,6 +52,7 @@ export const kitIcons = {
   Sparkle: icon(() => p('M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z')),
   Filter: icon(() => p('M3 4h18l-7 8v6l-4 2v-8L3 4z')),
   Wallet: icon(() => [rect(3, 6, 18, 14, 2.5), p('M3 10h18M16 14h2')]),
+  List: icon(() => [p('M8 6h13M8 12h13M8 18h13'), p('M3.5 6h.01M3.5 12h.01M3.5 18h.01')]),
 }
 
 export type KitIconName = keyof typeof kitIcons

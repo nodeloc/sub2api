@@ -281,6 +281,19 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/logs',
+    name: 'Logs',
+    // Fork-local kissopen: per-request logs with a detail drawer (OpenRouter-style).
+    component: () => import('@/views/user/kissopen/LogsView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: false,
+      title: 'Logs',
+      titleKey: 'logs.title',
+      descriptionKey: 'logs.description'
+    }
+  },
+  {
     // kissopen design pages (gateway-style; static/representative data).
     path: '/models',
     name: 'KoModels',

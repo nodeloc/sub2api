@@ -24,6 +24,7 @@ export function useUserNav() {
     { path: '/playground', label: t('nav.playground'), icon: kitIcons.Chat },
     { path: '/presets', label: t('nav.presets'), icon: kitIcons.Sparkle },
     { path: '/usage', label: t('nav.activity'), icon: kitIcons.Chart },
+    { path: '/logs', label: t('nav.logs'), icon: kitIcons.List },
     { path: '/credits', label: t('nav.credits'), icon: kitIcons.Wallet },
     { path: '/keys', label: t('nav.apiKeys'), icon: kitIcons.Key },
     { path: '/profile', label: t('nav.settings'), icon: kitIcons.Settings },
