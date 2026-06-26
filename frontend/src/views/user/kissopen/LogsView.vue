@@ -23,21 +23,6 @@
       </div>
     </div>
 
-    <!-- Mini request-volume chart -->
-    <div class="klog-chart card">
-      <div class="klog-chart__bars">
-        <div
-          v-for="(d, i) in trendBars"
-          :key="i"
-          class="klog-chart__bar"
-          :class="{ 'klog-chart__bar--last': i === trendBars.length - 1 }"
-          :style="{ height: barH(d.v) }"
-          :title="`${d.date} · ${d.v} ${t('logs.requests')}`"
-        />
-        <div v-if="trendBars.length === 0" class="klog-chart__empty">{{ t('logs.noData') }}</div>
-      </div>
-    </div>
-
     <!-- Logs table -->
     <div class="klog-table card">
       <div class="klog-table__scroll">
@@ -186,7 +171,7 @@ import { useI18n } from 'vue-i18n'
 import { useAppStore } from '@/stores/app'
 import { usageAPI } from '@/api'
 import AppLayout from '@/components/layout/AppLayout.vue'
-import type { UsageLog, TrendDataPoint } from '@/types'
+import type { UsageLog } from '@/types'
 
 const { t } = useI18n()
 const appStore = useAppStore()
@@ -195,7 +180,6 @@ const logs = ref<UsageLog[]>([])
 const loading = ref(false)
 const selected = ref<UsageLog | null>(null)
 const rangeDays = ref('7')
-const trend = ref<TrendDataPoint[]>([])
 
 const pagination = reactive({ page: 1, page_size: 50, total: 0 })
 const totalPages = computed(() => Math.max(1, Math.ceil(pagination.total / pagination.page_size)))
@@ -255,13 +239,6 @@ async function copy(text: string | null) {
   try { await navigator.clipboard.writeText(text); appStore.showSuccess(t('common.copied')) } catch { /* ignore */ }
 }
 
-// ── mini chart ──
-const trendBars = computed(() => trend.value.map((d) => ({ date: d.date.slice(5), v: d.requests || 0 })))
-const trendMax = computed(() => Math.max(1, ...trendBars.value.map((d) => d.v)))
-function barH(v: number): string {
-  return `${Math.max(3, Math.round((v / trendMax.value) * 100))}%`
-}
-
 function totalTokens(row: UsageLog): number {
   return (row.input_tokens ?? 0) + (row.output_tokens ?? 0) + (row.cache_read_tokens ?? 0) + (row.cache_creation_tokens ?? 0)
 }
@@ -296,14 +273,7 @@ async function loadLogs() {
     loading.value = false
   }
 }
-async function loadTrend() {
-  try {
-    const r = await usageAPI.getDashboardTrend({ start_date: startDate.value, end_date: endDate.value, granularity: 'day' })
-    trend.value = r.trend || []
-  } catch { /* non-critical */ }
-}
-
-function reload() { pagination.page = 1; loadLogs(); loadTrend() }
+function reload() { pagination.page = 1; loadLogs() }
 function goPage(p: number) { pagination.page = p; loadLogs() }
 function applyRange() {
   const days = Number(rangeDays.value)
@@ -312,7 +282,7 @@ function applyRange() {
   reload()
 }
 
-onMounted(() => { loadLogs(); loadTrend() })
+onMounted(() => { loadLogs() })
 </script>
 
 <style scoped>
@@ -338,14 +308,6 @@ onMounted(() => { loadLogs(); loadTrend() })
 .klog-range { width: 160px; }
 .klog-spin { animation: klog-spin 0.8s linear infinite; }
 @keyframes klog-spin { to { transform: rotate(360deg); } }
-
-/* mini chart */
-.klog-chart { padding: 14px 16px; margin-bottom: 14px; }
-.klog-chart__bars { display: flex; align-items: flex-end; gap: 3px; height: 72px; }
-.klog-chart__bar { flex: 1; min-width: 2px; border-radius: 3px 3px 1px 1px; background: var(--coral-200); transition: background var(--dur-fast) var(--ease-out); }
-.klog-chart__bar--last { background: var(--grad-brand); }
-.klog-chart__bar:hover { background: var(--coral-400); }
-.klog-chart__empty { width: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-faint); font: var(--text-sm) var(--font-sans); }
 
 /* table */
 .klog-table { padding: 0; overflow: hidden; }
