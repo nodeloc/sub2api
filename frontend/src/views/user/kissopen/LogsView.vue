@@ -113,7 +113,7 @@
               <div class="klog-card"><div class="klog-card__lbl">{{ t('logs.col.cost') }}</div><div class="klog-card__val">{{ fmtCost(selected.actual_cost) }}</div></div>
               <div class="klog-card"><div class="klog-card__lbl">{{ t('logs.tokens') }}</div><div class="klog-card__val">{{ (selected.input_tokens ?? 0).toLocaleString() }} → {{ (selected.output_tokens ?? 0).toLocaleString() }}</div></div>
               <div class="klog-card"><div class="klog-card__lbl">{{ t('logs.duration') }}</div><div class="klog-card__val">{{ fmtDur(selected.duration_ms) }}</div></div>
-              <div class="klog-card"><div class="klog-card__lbl">{{ t('logs.col.type') }}</div><div class="klog-card__val">{{ selected.stream ? t('usage.stream') : t('usage.sync') }}</div></div>
+              <div class="klog-card"><div class="klog-card__lbl">{{ t('logs.col.type') }}</div><div class="klog-card__val">{{ requestTypeLabel(selected) }}</div></div>
             </div>
 
             <!-- Overview -->
@@ -122,7 +122,10 @@
               <div><dt>{{ t('logs.col.model') }}</dt><dd class="klog-mono">{{ selected.model }}</dd></div>
               <div><dt>{{ t('logs.col.provider') }}</dt><dd>{{ providerName(selected.model) }}</dd></div>
               <div v-if="selected.inbound_endpoint"><dt>{{ t('logs.endpoint') }}</dt><dd class="klog-mono">{{ selected.inbound_endpoint }}</dd></div>
+              <div v-if="selected.upstream_endpoint"><dt>{{ t('logs.upstreamEndpoint') }}</dt><dd class="klog-mono">{{ selected.upstream_endpoint }}</dd></div>
               <div v-if="selected.service_tier"><dt>{{ t('logs.serviceTier') }}</dt><dd>{{ selected.service_tier }}</dd></div>
+              <div v-if="selected.reasoning_effort"><dt>{{ t('logs.reasoningEffort') }}</dt><dd>{{ selected.reasoning_effort }}</dd></div>
+              <div v-if="selected.user_agent"><dt>{{ t('logs.app') }}</dt><dd class="klog-mono klog-wrap">{{ selected.user_agent }}</dd></div>
             </dl>
 
             <!-- Request -->
@@ -130,18 +133,43 @@
             <dl class="klog-kv">
               <div><dt>{{ t('logs.col.key') }}</dt><dd>{{ selected.api_key?.name || '—' }}</dd></div>
               <div><dt>{{ t('logs.requestId') }}</dt><dd class="klog-mono klog-copy" @click="copy(selected.request_id)" :title="t('common.copy')">{{ selected.request_id || '—' }}</dd></div>
+              <div><dt>{{ t('logs.col.type') }}</dt><dd>{{ requestTypeLabel(selected) }}</dd></div>
+              <div><dt>{{ t('logs.billing') }}</dt><dd>{{ billingLabel(selected) }}</dd></div>
               <div><dt>{{ t('logs.time') }}</dt><dd>{{ fullDate(selected.created_at) }}</dd></div>
               <div><dt>{{ t('logs.streaming') }}</dt><dd>{{ selected.stream ? t('common.yes') : t('common.no') }}</dd></div>
               <div><dt>{{ t('logs.rate') }}</dt><dd>{{ (selected.rate_multiplier ?? 1).toFixed(2) }}x</dd></div>
             </dl>
 
-            <!-- Cost & token breakdown -->
+            <!-- Tokens -->
+            <div class="klog-sec">{{ t('logs.tokens') }}</div>
+            <dl class="klog-kv">
+              <div><dt>{{ t('admin.usage.inputTokens') }}</dt><dd>{{ (selected.input_tokens ?? 0).toLocaleString() }}</dd></div>
+              <div><dt>{{ t('admin.usage.outputTokens') }}</dt><dd>{{ (selected.output_tokens ?? 0).toLocaleString() }}</dd></div>
+              <div v-if="selected.cache_read_tokens > 0"><dt>{{ t('admin.usage.cacheReadTokens') }}</dt><dd>{{ selected.cache_read_tokens.toLocaleString() }}</dd></div>
+              <div v-if="selected.cache_creation_tokens > 0"><dt>{{ t('admin.usage.cacheCreationTokens') }}</dt><dd>{{ selected.cache_creation_tokens.toLocaleString() }}</dd></div>
+              <div v-if="selected.cache_creation_5m_tokens > 0"><dt>{{ t('admin.usage.cacheCreation5mTokens') }}</dt><dd>{{ selected.cache_creation_5m_tokens.toLocaleString() }}</dd></div>
+              <div v-if="selected.cache_creation_1h_tokens > 0"><dt>{{ t('admin.usage.cacheCreation1hTokens') }}</dt><dd>{{ selected.cache_creation_1h_tokens.toLocaleString() }}</dd></div>
+              <div class="klog-kv__total"><dt>{{ t('logs.totalTokens') }}</dt><dd>{{ totalTokens(selected).toLocaleString() }}</dd></div>
+            </dl>
+
+            <!-- Images (image-generation requests) -->
+            <template v-if="selected.image_count > 0">
+              <div class="klog-sec">{{ t('logs.images') }}</div>
+              <dl class="klog-kv">
+                <div><dt>{{ t('logs.imageCount') }}</dt><dd>{{ selected.image_count }}</dd></div>
+                <div v-if="selected.image_size"><dt>{{ t('logs.imageSize') }}</dt><dd>{{ selected.image_size }}</dd></div>
+                <div v-if="selected.image_output_cost > 0"><dt>{{ t('logs.imageCost') }}</dt><dd>{{ fmtCost(selected.image_output_cost) }}</dd></div>
+              </dl>
+            </template>
+
+            <!-- Cost breakdown -->
             <div class="klog-sec">{{ t('logs.breakdown') }}</div>
             <dl class="klog-kv">
               <div v-if="selected.input_cost > 0"><dt>{{ t('admin.usage.inputCost') }}</dt><dd>{{ fmtCost(selected.input_cost) }}</dd></div>
               <div v-if="selected.output_cost > 0"><dt>{{ t('admin.usage.outputCost') }}</dt><dd>{{ fmtCost(selected.output_cost) }}</dd></div>
-              <div v-if="selected.cache_read_tokens > 0"><dt>{{ t('admin.usage.cacheReadTokens') }}</dt><dd>{{ selected.cache_read_tokens.toLocaleString() }}</dd></div>
-              <div v-if="selected.cache_creation_tokens > 0"><dt>{{ t('admin.usage.cacheCreationTokens') }}</dt><dd>{{ selected.cache_creation_tokens.toLocaleString() }}</dd></div>
+              <div v-if="selected.cache_creation_cost > 0"><dt>{{ t('admin.usage.cacheCreationCost') }}</dt><dd>{{ fmtCost(selected.cache_creation_cost) }}</dd></div>
+              <div v-if="selected.cache_read_cost > 0"><dt>{{ t('admin.usage.cacheReadCost') }}</dt><dd>{{ fmtCost(selected.cache_read_cost) }}</dd></div>
+              <div><dt>{{ t('logs.rate') }}</dt><dd>{{ (selected.rate_multiplier ?? 1).toFixed(2) }}x</dd></div>
               <div><dt>{{ t('logs.original') }}</dt><dd>{{ fmtCost(selected.total_cost) }}</dd></div>
               <div class="klog-kv__total"><dt>{{ t('logs.billed') }}</dt><dd>{{ fmtCost(selected.actual_cost) }}</dd></div>
             </dl>
@@ -232,6 +260,18 @@ const trendBars = computed(() => trend.value.map((d) => ({ date: d.date.slice(5)
 const trendMax = computed(() => Math.max(1, ...trendBars.value.map((d) => d.v)))
 function barH(v: number): string {
   return `${Math.max(3, Math.round((v / trendMax.value) * 100))}%`
+}
+
+function totalTokens(row: UsageLog): number {
+  return (row.input_tokens ?? 0) + (row.output_tokens ?? 0) + (row.cache_read_tokens ?? 0) + (row.cache_creation_tokens ?? 0)
+}
+function requestTypeLabel(row: UsageLog): string {
+  const rt = row.request_type
+  if (rt) return rt.charAt(0).toUpperCase() + rt.slice(1)
+  return row.stream ? t('usage.stream') : t('usage.sync')
+}
+function billingLabel(row: UsageLog): string {
+  return row.billing_type === 0 ? t('logs.credits') : t('logs.subscription')
 }
 
 function open(row: UsageLog) { selected.value = row }
@@ -379,6 +419,7 @@ onMounted(() => { loadLogs(); loadTrend() })
 .klog-kv dd { font: var(--weight-medium) var(--text-sm) var(--font-sans); color: var(--text-body); text-align: right; min-width: 0; overflow-wrap: anywhere; }
 .klog-kv__total dd { color: var(--coral-600); font-weight: var(--weight-bold); }
 .klog-mono { font-family: var(--font-mono); font-size: var(--text-xs); }
+.klog-wrap { white-space: normal; word-break: break-all; max-width: 280px; }
 .klog-copy { cursor: pointer; }
 .klog-copy:hover { color: var(--coral-600); }
 
