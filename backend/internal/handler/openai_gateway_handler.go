@@ -641,8 +641,10 @@ func (h *OpenAIGatewayHandler) Messages(c *gin.Context) {
 		zap.Any("group_id", apiKey.GroupID),
 	)
 
-	// 检查分组是否允许 /v1/messages 调度
-	if apiKey.Group != nil && !apiKey.Group.AllowMessagesDispatch {
+	// 检查分组是否允许 /v1/messages 调度。
+	// 多平台分组隐含允许：跨格式（Anthropic /v1/messages → OpenAI 账号）是
+	// "一个 key 全模型" 的应有之义，无需再单独打开 allow_messages_dispatch。
+	if apiKey.Group != nil && !apiKey.Group.AllowMessagesDispatch && !apiKey.Group.ModelsListConfig.MultiPlatform {
 		h.anthropicErrorResponse(c, http.StatusForbidden, "permission_error",
 			"This group does not allow /v1/messages dispatch")
 		return
