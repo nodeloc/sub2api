@@ -23,7 +23,7 @@
           <router-link :to="`/purchase?amount=${amount}`" class="ko-btn ko-btn--primary ko-btn--block">
             <component :is="icons.Wallet" :size="16" /> {{ t('credits.add', { n: amount }) }}
           </router-link>
-          <router-link to="/redeem" class="kc-buy__redeem">{{ t('credits.redeemCode') }} →</router-link>
+          <button type="button" class="kc-buy__redeem" @click="openRedeem">{{ t('credits.redeemCode') }} →</button>
         </div>
 
         <!-- Spend stats (real) -->
@@ -67,11 +67,44 @@
         </template>
       </div>
     </div>
+
+    <!-- Redeem code modal -->
+    <Teleport to="body">
+      <transition name="kc-fade">
+        <div v-if="showRedeem" class="kc-modal-bk" @click="closeRedeem">
+          <div class="kc-modal" role="dialog" aria-modal="true" @click.stop>
+            <div class="kc-modal__head">
+              <h3 class="kc-modal__title">{{ t('credits.redeemCode') }}</h3>
+              <button class="ko-iconbtn ko-iconbtn--outline" :aria-label="t('common.close')" @click="closeRedeem">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <p class="kc-modal__sub">{{ t('credits.redeemSub') }}</p>
+            <input
+              ref="redeemInput"
+              v-model="redeemCode"
+              class="ko-input ko-input--mono kc-modal__input"
+              :placeholder="t('credits.redeemPlaceholder')"
+              :disabled="redeeming"
+              @keyup.enter="doRedeem"
+            />
+            <div v-if="redeemError" class="kc-modal__msg kc-modal__msg--err">{{ redeemError }}</div>
+            <div v-if="redeemSuccess" class="kc-modal__msg kc-modal__msg--ok">{{ redeemSuccess }}</div>
+            <div class="kc-modal__actions">
+              <button class="ko-btn ko-btn--secondary" @click="closeRedeem">{{ t('common.cancel') }}</button>
+              <button class="ko-btn ko-btn--primary" :disabled="redeeming || !redeemCode.trim()" @click="doRedeem">
+                {{ redeeming ? t('credits.redeeming') : t('credits.redeemSubmit') }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </Teleport>
   </AppLayout>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import AppLayout from '@/components/layout/AppLayout.vue'
@@ -93,6 +126,44 @@ const amount = ref(25)
 const loading = ref(true)
 const stats = ref<UserDashboardStats | null>(null)
 
+// Redeem-code modal
+const showRedeem = ref(false)
+const redeemCode = ref('')
+const redeeming = ref(false)
+const redeemError = ref('')
+const redeemSuccess = ref('')
+const redeemInput = ref<HTMLInputElement | null>(null)
+
+function openRedeem() {
+  redeemError.value = ''
+  redeemSuccess.value = ''
+  redeemCode.value = ''
+  showRedeem.value = true
+  nextTick(() => redeemInput.value?.focus())
+}
+function closeRedeem() {
+  showRedeem.value = false
+}
+async function doRedeem() {
+  const code = redeemCode.value.trim()
+  if (!code || redeeming.value) return
+  redeeming.value = true
+  redeemError.value = ''
+  redeemSuccess.value = ''
+  try {
+    const r = await redeemAPI.redeem(code)
+    redeemSuccess.value = t('credits.redeemSuccess', { v: Number(r.value).toFixed(2) })
+    redeemCode.value = ''
+    await authStore.refreshUser().catch(() => {})
+    await loadData()
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: { message?: string } }; message?: string }
+    redeemError.value = err?.response?.data?.message || err?.message || t('credits.redeemFailed')
+  } finally {
+    redeeming.value = false
+  }
+}
+
 interface Txn { key: string; title: string; date: string; amt: string; status?: string; ts: number }
 const txnsRaw = ref<Txn[]>([])
 const txns = computed(() => [...txnsRaw.value].sort((a, b) => b.ts - a.ts).slice(0, 30))
@@ -109,7 +180,7 @@ function fmtDate(s?: string) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
-onMounted(async () => {
+async function loadData() {
   try {
     stats.value = await getDashboardStats()
   } catch (e) {
@@ -149,7 +220,9 @@ onMounted(async () => {
   }
   txnsRaw.value = list
   loading.value = false
-})
+}
+
+onMounted(loadData)
 </script>
 
 <style scoped>
@@ -215,11 +288,87 @@ onMounted(async () => {
 }
 .kc-buy__redeem {
   display: block;
+  width: 100%;
   text-align: center;
   margin-top: 12px;
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
   font: var(--weight-semibold) var(--text-sm) var(--font-sans);
   color: var(--coral-700);
   text-decoration: none;
+}
+.kc-buy__redeem:hover {
+  color: var(--coral-800, var(--coral-700));
+  text-decoration: underline;
+}
+
+/* redeem modal */
+.kc-modal-bk {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 12, 10, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 70;
+}
+.kc-modal {
+  width: min(420px, 100%);
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: 0 20px 50px rgba(20, 12, 10, 0.2);
+  padding: 22px;
+}
+.kc-modal__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.kc-modal__title {
+  font: var(--weight-bold) var(--text-lg) var(--font-sans);
+  color: var(--text-strong);
+}
+.kc-modal__sub {
+  font: var(--text-sm) var(--font-sans);
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.kc-modal__input {
+  width: 100%;
+  margin-bottom: 12px;
+}
+.kc-modal__msg {
+  font: var(--weight-medium) var(--text-sm) var(--font-sans);
+  padding: 8px 11px;
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+}
+.kc-modal__msg--err {
+  color: var(--danger, #d64545);
+  background: rgba(214, 69, 69, 0.1);
+}
+.kc-modal__msg--ok {
+  color: var(--success, #2f9e6e);
+  background: rgba(47, 158, 110, 0.12);
+}
+.kc-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.kc-fade-enter-active,
+.kc-fade-leave-active {
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.kc-fade-enter-from,
+.kc-fade-leave-to {
+  opacity: 0;
 }
 .kc-stats {
   display: flex;
