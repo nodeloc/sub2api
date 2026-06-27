@@ -120,7 +120,8 @@ export default {
         developers: '开发者',
         company: '公司',
         about: '关于',
-        contact: '联系'
+        contact: '联系',
+        legal: '法律条款'
       }
     },
     // 新增：面向用户的价值主张

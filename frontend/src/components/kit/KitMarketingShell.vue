@@ -90,26 +90,31 @@ function toggleTheme() {
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
 
-const cols = computed<{ head: string; items: { label: string; to?: string }[] }[]>(() => [
-  { head: t('marketing.footer.productHead'), items: [
-    { label: t('home.landing.nav.models'), to: '/models' },
-    { label: t('marketing.footer.playground'), to: '/playground' },
-    { label: t('home.landing.nav.pricing'), to: '/pricing' },
-    { label: t('marketing.footer.credits'), to: '/credits' },
-  ] },
-  { head: t('marketing.footer.devHead'), items: [
-    { label: t('home.landing.nav.docs'), to: '/docs' },
-    { label: t('marketing.footer.quickstart'), to: '/docs' },
-    { label: t('marketing.footer.apiKeys'), to: '/keys' },
-    { label: t('marketing.footer.changelog') },
-  ] },
-  { head: t('marketing.footer.companyHead'), items: [
-    { label: t('marketing.footer.about') },
-    { label: t('marketing.footer.blog') },
-    { label: t('marketing.footer.careers') },
-    { label: t('marketing.footer.contact') },
-  ] },
-])
+// Legal / terms documents configured in admin settings, surfaced in the footer.
+const legalDocs = computed(() => appStore.cachedPublicSettings?.login_agreement_documents ?? [])
+
+const cols = computed<{ head: string; items: { label: string; to?: string }[] }[]>(() => {
+  const result = [
+    { head: t('marketing.footer.productHead'), items: [
+      { label: t('home.landing.nav.models'), to: '/models' },
+      { label: t('marketing.footer.playground'), to: '/playground' },
+      { label: t('home.landing.nav.pricing'), to: '/pricing' },
+      { label: t('marketing.footer.credits'), to: '/credits' },
+    ] },
+    { head: t('marketing.footer.devHead'), items: [
+      { label: t('home.landing.nav.docs'), to: '/docs' },
+      { label: t('marketing.footer.quickstart'), to: '/docs' },
+      { label: t('marketing.footer.apiKeys'), to: '/keys' },
+    ] },
+  ]
+  if (legalDocs.value.length) {
+    result.push({
+      head: t('home.landing.footer.legal'),
+      items: legalDocs.value.map((d) => ({ label: d.title, to: `/legal/${d.id}` })),
+    })
+  }
+  return result
+})
 </script>
 
 <style scoped>

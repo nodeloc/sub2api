@@ -120,7 +120,8 @@ export default {
         developers: 'Developers',
         company: 'Company',
         about: 'About',
-        contact: 'Contact'
+        contact: 'Contact',
+        legal: 'Legal'
       }
     },
     // User-focused value proposition

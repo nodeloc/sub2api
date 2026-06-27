@@ -305,9 +305,6 @@ const isHomeContentUrl = computed(() => {
 // Theme
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
-// GitHub URL
-const githubUrl = 'https://github.com/Wei-Shaw/sub2api'
-
 // Auth state
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const isAdmin = computed(() => authStore.isAdmin)
@@ -432,31 +429,35 @@ const plans = computed(() =>
   }))
 )
 
-const footerCols = computed(() => [
-  {
-    head: t('home.landing.footer.product'),
-    items: [
-      { label: t('home.landing.nav.models'), href: '#models' },
-      { label: t('home.landing.nav.pricing'), href: '#pricing' },
-      { label: t('home.landing.nav.how'), href: '#how' },
-      { label: t('home.landing.nav.signIn'), href: '/login' },
-    ],
-  },
-  {
-    head: t('home.landing.footer.developers'),
-    items: [
-      { label: t('home.landing.nav.docs'), href: docUrl.value || '#', external: !!docUrl.value },
-      { label: 'GitHub', href: githubUrl, external: true },
-    ],
-  },
-  {
-    head: t('home.landing.footer.company'),
-    items: [
-      { label: t('home.landing.footer.about'), href: '#top' },
-      { label: t('home.landing.footer.contact'), href: githubUrl, external: true },
-    ],
-  },
-])
+// Legal / terms documents configured in admin settings, surfaced in the footer.
+const legalDocs = computed(() => appStore.cachedPublicSettings?.login_agreement_documents ?? [])
+
+const footerCols = computed(() => {
+  const cols: { head: string; items: { label: string; href: string; external?: boolean }[] }[] = [
+    {
+      head: t('home.landing.footer.product'),
+      items: [
+        { label: t('home.landing.nav.models'), href: '#models' },
+        { label: t('home.landing.nav.pricing'), href: '#pricing' },
+        { label: t('home.landing.nav.how'), href: '#how' },
+      ],
+    },
+    {
+      head: t('home.landing.footer.developers'),
+      items: [
+        { label: t('home.landing.nav.docs'), href: docUrl.value || '/docs', external: !!docUrl.value },
+        { label: t('home.landing.nav.signIn'), href: '/login' },
+      ],
+    },
+  ]
+  if (legalDocs.value.length) {
+    cols.push({
+      head: t('home.landing.footer.legal'),
+      items: legalDocs.value.map((d) => ({ label: d.title, href: `/legal/${d.id}` })),
+    })
+  }
+  return cols
+})
 
 // Toggle theme
 function toggleTheme() {
