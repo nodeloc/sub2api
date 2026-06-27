@@ -8,14 +8,28 @@
           <span class="km-logo__name">{{ siteName }}</span>
         </router-link>
         <nav class="km-links">
-          <a class="km-link" href="/#models">Models</a>
-          <a class="km-link" href="/#how">How it works</a>
-          <router-link class="km-link" :class="{ 'km-link--active': active === 'pricing' }" to="/pricing">Pricing</router-link>
-          <router-link class="km-link" :class="{ 'km-link--active': active === 'docs' }" to="/docs">Docs</router-link>
+          <a class="km-link" href="/#models">{{ t('home.landing.nav.models') }}</a>
+          <a class="km-link" href="/#how">{{ t('home.landing.nav.how') }}</a>
+          <router-link class="km-link" :class="{ 'km-link--active': active === 'pricing' }" to="/pricing">{{ t('home.landing.nav.pricing') }}</router-link>
+          <router-link class="km-link" :class="{ 'km-link--active': active === 'docs' }" to="/docs">{{ t('home.landing.nav.docs') }}</router-link>
         </nav>
         <div class="km-actions">
-          <router-link class="km-link" to="/login">Sign in</router-link>
-          <router-link to="/login" class="ko-btn ko-btn--primary ko-btn--sm">Start free</router-link>
+          <LocaleSwitcher />
+          <button
+            class="km-icontoggle"
+            :title="isDark ? t('home.switchToLight') : t('home.switchToDark')"
+            @click="toggleTheme"
+          >
+            <Icon v-if="isDark" name="sun" size="md" />
+            <Icon v-else name="moon" size="md" />
+          </button>
+          <template v-if="isAuthenticated">
+            <router-link :to="dashboardPath" class="ko-btn ko-btn--primary ko-btn--sm">{{ t('home.dashboard') }}</router-link>
+          </template>
+          <template v-else>
+            <router-link class="km-link km-signin" to="/login">{{ t('home.landing.nav.signIn') }}</router-link>
+            <router-link to="/login" class="ko-btn ko-btn--primary ko-btn--sm">{{ t('home.landing.nav.startFree') }}</router-link>
+          </template>
         </div>
       </div>
     </div>
@@ -30,7 +44,7 @@
             <img v-if="siteLogo" :src="siteLogo" alt="" class="km-logo__img" />
             <span class="km-logo__name">{{ siteName }}</span>
           </router-link>
-          <p class="km-footer__tag">One API for every AI model. Keep it simple.</p>
+          <p class="km-footer__tag">{{ t('marketing.footer.tag') }}</p>
         </div>
         <div v-for="col in cols" :key="col.head" class="km-footer__col">
           <div class="km-footer__head">{{ col.head }}</div>
@@ -42,42 +56,60 @@
           </div>
         </div>
       </div>
-      <div class="km-wrap km-footer__copy">© {{ year }} {{ siteName }} · Keep It Simple, Stupid.</div>
+      <div class="km-wrap km-footer__copy">© {{ year }} {{ siteName }} · {{ t('marketing.footer.copy') }}</div>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useAppStore } from '@/stores'
+import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useAppStore, useAuthStore } from '@/stores'
+import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
+import Icon from '@/components/icons/Icon.vue'
 
 defineProps<{ active?: string }>()
 
+const { t } = useI18n()
 const appStore = useAppStore()
+const authStore = useAuthStore()
 const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'kissopen')
 const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '')
 const year = new Date().getFullYear()
 
-const cols: { head: string; items: { label: string; to?: string }[] }[] = [
-  { head: 'Product', items: [
-    { label: 'Models', to: '/models' },
-    { label: 'Playground', to: '/playground' },
-    { label: 'Pricing', to: '/pricing' },
-    { label: 'Credits', to: '/credits' },
+// Auth state — the marketing pages must reflect the real session.
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const isAdmin = computed(() => authStore.isAdmin)
+const dashboardPath = computed(() => (isAdmin.value ? '/admin/dashboard' : '/dashboard'))
+
+// Theme toggle (mirrors the landing page header)
+const isDark = ref(document.documentElement.classList.contains('dark'))
+function toggleTheme() {
+  isDark.value = !isDark.value
+  document.documentElement.classList.toggle('dark', isDark.value)
+  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
+}
+
+const cols = computed<{ head: string; items: { label: string; to?: string }[] }[]>(() => [
+  { head: t('marketing.footer.productHead'), items: [
+    { label: t('home.landing.nav.models'), to: '/models' },
+    { label: t('marketing.footer.playground'), to: '/playground' },
+    { label: t('home.landing.nav.pricing'), to: '/pricing' },
+    { label: t('marketing.footer.credits'), to: '/credits' },
   ] },
-  { head: 'Developers', items: [
-    { label: 'Docs', to: '/docs' },
-    { label: 'Quickstart', to: '/docs' },
-    { label: 'API keys', to: '/keys' },
-    { label: 'Changelog' },
+  { head: t('marketing.footer.devHead'), items: [
+    { label: t('home.landing.nav.docs'), to: '/docs' },
+    { label: t('marketing.footer.quickstart'), to: '/docs' },
+    { label: t('marketing.footer.apiKeys'), to: '/keys' },
+    { label: t('marketing.footer.changelog') },
   ] },
-  { head: 'Company', items: [
-    { label: 'About' },
-    { label: 'Blog' },
-    { label: 'Careers' },
-    { label: 'Contact' },
+  { head: t('marketing.footer.companyHead'), items: [
+    { label: t('marketing.footer.about') },
+    { label: t('marketing.footer.blog') },
+    { label: t('marketing.footer.careers') },
+    { label: t('marketing.footer.contact') },
   ] },
-]
+])
 </script>
 
 <style scoped>
@@ -153,6 +185,26 @@ const cols: { head: string; items: { label: string; to?: string }[] }[] = [
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.km-signin {
+  white-space: nowrap;
+}
+.km-icontoggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.km-icontoggle:hover {
+  color: var(--text-strong);
+  border-color: var(--border-strong);
 }
 @media (max-width: 720px) {
   .km-links {

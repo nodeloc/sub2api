@@ -2,9 +2,9 @@
   <KitMarketingShell active="pricing">
     <div class="kp-wrap">
       <div class="kp-hero">
-        <span class="ko-badge ko-badge--brand"><span class="ko-badge__dot"></span>No markup · cancel anytime</span>
-        <h1 class="kp-title">Simple, usage-based pricing</h1>
-        <p class="kp-sub">Start free and pay only for the tokens you use. Add the Team plan when you need more.</p>
+        <span class="ko-badge ko-badge--brand"><span class="ko-badge__dot"></span>{{ t('marketing.pricing.heroBadge') }}</span>
+        <h1 class="kp-title">{{ t('marketing.pricing.heroTitle') }}</h1>
+        <p class="kp-sub">{{ t('marketing.pricing.heroSub') }}</p>
       </div>
 
       <!-- Plans (real subscription packages when signed in) -->
@@ -15,7 +15,7 @@
           class="ko-card kp-plan"
           :class="{ 'kp-plan--featured': p.featured }"
         >
-          <span v-if="p.featured" class="ko-badge ko-badge--solid kp-plan__tag">Most popular</span>
+          <span v-if="p.featured" class="ko-badge ko-badge--solid kp-plan__tag">{{ t('marketing.pricing.mostPopular') }}</span>
           <h3 class="kp-plan__name">{{ p.name }}</h3>
           <div class="kp-plan__price">
             <span class="kp-plan__amount">{{ p.price }}</span>
@@ -34,8 +34,8 @@
 
       <!-- Billing rule (Claude-style) -->
       <div class="kp-rule">
-        <h2 class="kp-h2">Team billing rule</h2>
-        <p class="kp-lead">Usage on the Team plan is metered per token, modeled on Claude's pricing.</p>
+        <h2 class="kp-h2">{{ t('marketing.pricing.ruleHead') }}</h2>
+        <p class="kp-lead">{{ t('marketing.pricing.ruleLead') }}</p>
         <div class="ko-card kp-rule__card">
           <div v-for="r in rule" :key="r.k" class="kp-rule__row">
             <span class="kp-rule__k">{{ r.k }}</span>
@@ -46,11 +46,11 @@
 
       <!-- Per-token table (Team Claude-style rates) -->
       <div class="kp-tokens">
-        <h2 class="kp-h2">Per-token rates</h2>
-        <p class="kp-lead">What the Team plan charges per model. Prices per million tokens.</p>
+        <h2 class="kp-h2">{{ t('marketing.pricing.tokensHead') }}</h2>
+        <p class="kp-lead">{{ t('marketing.pricing.tokensLead') }}</p>
         <div class="ko-card kp-table">
           <div class="kp-table__head">
-            <span>Model</span><span>Context</span><span>Input / M</span><span>Output / M</span>
+            <span>{{ t('marketing.pricing.thModel') }}</span><span>{{ t('marketing.pricing.thContext') }}</span><span>{{ t('marketing.pricing.thInput') }}</span><span>{{ t('marketing.pricing.thOutput') }}</span>
           </div>
           <div v-for="m in teamRates" :key="m.name" class="kp-table__row">
             <div>
@@ -66,7 +66,7 @@
 
       <!-- FAQ -->
       <div class="kp-faq">
-        <h2 class="kp-h2 kp-h2--center">Questions</h2>
+        <h2 class="kp-h2 kp-h2--center">{{ t('marketing.pricing.faqHead') }}</h2>
         <div class="kp-faq__list">
           <div v-for="q in faqs" :key="q.q" class="ko-card">
             <div class="kp-faq__q">{{ q.q }}</div>
@@ -80,10 +80,15 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import '@/styles/kit-components.css'
 import KitMarketingShell from '@/components/kit/KitMarketingShell.vue'
 import { kitIcons as icons } from '@/components/kit/icons'
 import { paymentAPI } from '@/api/payment'
+import { useAuthStore } from '@/stores'
+
+const { t } = useI18n()
+const authStore = useAuthStore()
 
 interface PlanCard {
   name: string
@@ -98,28 +103,28 @@ interface PlanCard {
 }
 
 const realPlans = ref<any[]>([])
-const authed = ref(false)
+const authed = computed(() => authStore.isAuthenticated)
 
 onMounted(async () => {
   try {
     const data = await paymentAPI.getPlans()
     realPlans.value = Array.isArray(data) ? data : ((data as any)?.data ?? [])
-    authed.value = true
   } catch {
-    authed.value = false
+    // not signed in or plans unavailable — fall back to the static Team card
   }
 })
 
 const plans = computed<PlanCard[]>(() => {
   const buyTo = authed.value ? '/purchase' : '/login'
   const payg: PlanCard = {
-    name: 'Pay as you go', price: '$0', note: '/ month', featured: false,
-    cta: 'Start free', to: authed.value ? '/dashboard' : '/login',
-    feats: ['Only pay for tokens used', 'All available models', '1 workspace', 'Community support'],
+    name: t('marketing.pricing.paygName'), price: '$0', note: t('marketing.pricing.paygNote'), featured: false,
+    cta: t('marketing.pricing.startFree'), to: authed.value ? '/dashboard' : '/login',
+    feats: t('marketing.pricing.paygFeats').split('\n'),
   }
   const enterprise: PlanCard = {
-    name: 'Enterprise', price: 'Custom', note: '', featured: false, cta: 'Talk to us', to: '/docs',
-    feats: ['SSO & SCIM', 'Dedicated capacity', 'SLA & support', 'Custom data policies'],
+    name: t('marketing.pricing.enterpriseName'), price: t('marketing.pricing.enterprisePrice'), note: '', featured: false,
+    cta: t('marketing.pricing.talkToUs'), to: '/docs',
+    feats: t('marketing.pricing.enterpriseFeats').split('\n'),
   }
   const mid: PlanCard[] = realPlans.value.length
     ? realPlans.value.map((p) => ({
@@ -129,40 +134,41 @@ const plans = computed<PlanCard[]>(() => {
         original: p.original_price ? `$${Number(p.original_price).toFixed(0)}` : undefined,
         desc: p.description || undefined,
         featured: true,
-        cta: `Start ${p.name}`,
+        cta: t('marketing.pricing.startPlan', { name: p.name }),
         feats: String(p.features || '').split('\n').map((s) => s.trim()).filter(Boolean),
         to: buyTo,
       }))
     : [{
-        name: 'Team', price: '$20', note: '/ 30 days', original: '$40', featured: true, cta: 'Start Team', to: buyTo,
-        desc: 'For growing teams. One key for every Claude model, billed Claude-style per token.',
-        feats: ['Everything in Pay as you go', 'Claude-style per-token billing', 'Cache read 0.1× · write 1.25×/2×', 'Long-context tiered pricing', 'Priority routing'],
+        name: t('marketing.pricing.teamName'), price: '$20', note: t('marketing.pricing.teamNote'), original: '$40',
+        featured: true, cta: t('marketing.pricing.teamCta'), to: buyTo,
+        desc: t('marketing.pricing.teamDesc'),
+        feats: t('marketing.pricing.teamFeats').split('\n'),
       }]
   return [payg, ...mid, enterprise]
 })
 
 // The Claude-style billing rule attached to the Team package.
-const rule = [
-  { k: 'Input / output tokens', v: "Per token at each model's rate (e.g. Opus $5 / $25 per 1M)" },
-  { k: 'Cache write', v: '1.25× input (5-min TTL) · 2× input (1-hour TTL)' },
-  { k: 'Cache read', v: '0.1× input' },
-  { k: 'Batch requests', v: '0.5× (50% off)' },
-  { k: 'Long context (>200K)', v: 'Premium tier (≈2× input/output)' },
-]
+const rule = computed(() => [
+  { k: t('marketing.pricing.ruleInOutK'), v: t('marketing.pricing.ruleInOutV') },
+  { k: t('marketing.pricing.ruleCacheWriteK'), v: t('marketing.pricing.ruleCacheWriteV') },
+  { k: t('marketing.pricing.ruleCacheReadK'), v: t('marketing.pricing.ruleCacheReadV') },
+  { k: t('marketing.pricing.ruleBatchK'), v: t('marketing.pricing.ruleBatchV') },
+  { k: t('marketing.pricing.ruleLongK'), v: t('marketing.pricing.ruleLongV') },
+])
 
-// Seeded Team per-token rates (Claude-modeled).
+// Seeded Team per-token rates (Claude-modeled) — model data, not localized.
 const teamRates = [
   { name: 'Claude Opus 4.8', provider: 'anthropic', context: '≤200K · >200K 2×', priceIn: '$5.00', priceOut: '$25.00' },
   { name: 'Claude Sonnet 4.6', provider: 'anthropic', context: '1M', priceIn: '$3.00', priceOut: '$15.00' },
   { name: 'Claude Haiku 4.5', provider: 'anthropic', context: '200K', priceIn: '$1.00', priceOut: '$5.00' },
 ]
 
-const faqs = [
-  { q: 'How does Team billing work?', a: 'A fixed $20 / 30-day subscription unlocks the Team group; usage is then metered per token using the Claude-style rule above, drawn from your balance.' },
-  { q: 'Is there a markup on tokens?', a: 'The per-token rates mirror Claude\'s own pricing — input/output plus cache and long-context tiers. No hidden per-token margin.' },
-  { q: 'What happens if a provider goes down?', a: 'With fallback routing on, requests re-route to the next healthy upstream for that model automatically.' },
-  { q: 'Can I set spend limits?', a: 'Yes — per-group daily/weekly/monthly USD caps, low-balance alerts, and an optional hard stop.' },
-]
+const faqs = computed(() => [
+  { q: t('marketing.pricing.faq1Q'), a: t('marketing.pricing.faq1A') },
+  { q: t('marketing.pricing.faq2Q'), a: t('marketing.pricing.faq2A') },
+  { q: t('marketing.pricing.faq3Q'), a: t('marketing.pricing.faq3A') },
+  { q: t('marketing.pricing.faq4Q'), a: t('marketing.pricing.faq4A') },
+])
 </script>
 
 <style scoped>

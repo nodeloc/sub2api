@@ -3,7 +3,7 @@
     <div class="kd-wrap">
       <!-- Side nav -->
       <aside class="kd-side">
-        <div class="kd-side__head">Get started</div>
+        <div class="kd-side__head">{{ t('marketing.docs.sideHead') }}</div>
         <a
           v-for="s in sections"
           :key="s.id"
@@ -15,44 +15,61 @@
 
       <!-- Prose -->
       <div class="kd-prose">
-        <span class="ko-badge ko-badge--brand">Quickstart</span>
-        <h1 class="kd-h1">Make your first request</h1>
-        <p>It speaks the OpenAI API. Point your base URL at us, keep your SDK, and name any of 240+ models. You'll be running in under a minute.</p>
+        <span class="ko-badge ko-badge--brand">{{ t('marketing.docs.badge') }}</span>
+        <h1 class="kd-h1">{{ t('marketing.docs.h1') }}</h1>
+        <p>{{ t('marketing.docs.intro') }}</p>
 
         <div id="doc-quickstart" class="kd-anchor"></div>
         <div class="ko-alert ko-alert--info">
           <span class="ko-alert__icon"><component :is="icons.Sparkle" :size="20" /></span>
           <div>
-            <div class="ko-alert__title">One key, every model</div>
-            <div class="ko-alert__body">Already using the OpenAI SDK? Change two lines — <code class="kd-inline">base_url</code> and <code class="kd-inline">api_key</code> — and you're done.</div>
+            <div class="ko-alert__title">{{ t('marketing.docs.alertTitle') }}</div>
+            <div class="ko-alert__body">
+              <i18n-t keypath="marketing.docs.alertBody" tag="span">
+                <template #base><code class="kd-inline">base_url</code></template>
+                <template #key><code class="kd-inline">api_key</code></template>
+              </i18n-t>
+            </div>
           </div>
         </div>
 
-        <h2 id="doc-auth" class="kd-sec">Authentication</h2>
-        <p>Create a key in the dashboard, then send it as a Bearer token. Keep it server-side.</p>
+        <h2 id="doc-auth" class="kd-sec">{{ t('marketing.docs.authH2') }}</h2>
+        <p>{{ t('marketing.docs.authP') }}</p>
         <KitCodeBlock lang="bash" :code="codeAuth" />
 
-        <h2 id="doc-first" class="kd-sec">First request</h2>
-        <p>A minimal chat completion. The <code class="kd-inline">model</code> field is your routing decision — switch models by changing this one string.</p>
+        <h2 id="doc-first" class="kd-sec">{{ t('marketing.docs.firstH2') }}</h2>
+        <p>
+          <i18n-t keypath="marketing.docs.firstP" tag="span">
+            <template #model><code class="kd-inline">model</code></template>
+          </i18n-t>
+        </p>
         <KitCodeBlock lang="bash" :code="codeFirst" />
 
-        <h2 id="doc-streaming" class="kd-sec">Streaming</h2>
-        <p>Set <code class="kd-inline">stream: true</code> to receive server-sent events as tokens are generated.</p>
+        <h2 id="doc-streaming" class="kd-sec">{{ t('marketing.docs.streamingH2') }}</h2>
+        <p>
+          <i18n-t keypath="marketing.docs.streamingP" tag="span">
+            <template #stream><code class="kd-inline">stream: true</code></template>
+          </i18n-t>
+        </p>
         <KitCodeBlock lang="python" :code="codeStream" />
 
-        <h2 id="doc-routing" class="kd-sec">Model routing</h2>
-        <p>The <code class="kd-inline">model</code> string is your routing decision — switch models, providers and upstream accounts by changing this one field. The gateway picks a healthy upstream for that model automatically.</p>
+        <h2 id="doc-routing" class="kd-sec">{{ t('marketing.docs.routingH2') }}</h2>
+        <p>
+          <i18n-t keypath="marketing.docs.routingP" tag="span">
+            <template #model><code class="kd-inline">model</code></template>
+          </i18n-t>
+        </p>
         <KitCodeBlock lang="json" :code="codeRouting" />
 
-        <h2 id="doc-sdks" class="kd-sec">SDKs</h2>
-        <p>Use the native OpenAI SDKs, or our thin wrappers. Same request shape across every model.</p>
+        <h2 id="doc-sdks" class="kd-sec">{{ t('marketing.docs.sdksH2') }}</h2>
+        <p>{{ t('marketing.docs.sdksP') }}</p>
         <div class="kd-sdks">
           <span v-for="s in sdks" :key="s" class="ko-badge ko-badge--mono">{{ s }}</span>
         </div>
         <KitCodeBlock lang="typescript" :code="codeSdk" />
         <div class="kd-actions">
-          <router-link to="/keys" class="ko-btn ko-btn--primary">Get an API key <component :is="icons.Arrow" :size="16" /></router-link>
-          <router-link to="/models" class="ko-btn ko-btn--secondary">Browse models</router-link>
+          <router-link to="/keys" class="ko-btn ko-btn--primary">{{ t('marketing.docs.getKey') }} <component :is="icons.Arrow" :size="16" /></router-link>
+          <router-link to="/models" class="ko-btn ko-btn--secondary">{{ t('marketing.docs.browseModels') }}</router-link>
         </div>
       </div>
     </div>
@@ -61,22 +78,25 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import '@/styles/kit-components.css'
 import KitMarketingShell from '@/components/kit/KitMarketingShell.vue'
 import KitCodeBlock from '@/components/kit/KitCodeBlock.vue'
 import { kitIcons as icons } from '@/components/kit/icons'
 
+const { t } = useI18n()
+
 // Real API base for this deployment, so copied snippets work as-is.
 const apiBase = computed(() => `${window.location.origin}/v1`)
 
-const sections = [
-  { id: 'quickstart', label: 'Quickstart' },
-  { id: 'auth', label: 'Authentication' },
-  { id: 'first', label: 'First request' },
-  { id: 'streaming', label: 'Streaming' },
-  { id: 'routing', label: 'Model routing' },
-  { id: 'sdks', label: 'SDKs' },
-]
+const sections = computed(() => [
+  { id: 'quickstart', label: t('marketing.docs.navQuickstart') },
+  { id: 'auth', label: t('marketing.docs.navAuth') },
+  { id: 'first', label: t('marketing.docs.navFirst') },
+  { id: 'streaming', label: t('marketing.docs.navStreaming') },
+  { id: 'routing', label: t('marketing.docs.navRouting') },
+  { id: 'sdks', label: t('marketing.docs.navSdks') },
+])
 const active = ref('quickstart')
 function go(id: string) {
   active.value = id
