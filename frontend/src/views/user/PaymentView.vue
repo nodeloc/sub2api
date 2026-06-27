@@ -93,83 +93,66 @@
           <template v-else-if="activeTab === 'subscription'">
             <!-- Subscription confirm (inline, replaces plan list) -->
             <template v-if="selectedPlan">
-              <div class="card p-5">
-                <!-- Header: platform badge + plan name -->
-                <div class="mb-3 flex flex-wrap items-center gap-2">
-                  <span :class="['rounded-md border px-2 py-0.5 text-xs font-medium', planBadgeClass]">
-                    {{ platformLabel(selectedPlan.group_platform || '') }}
-                  </span>
-                  <h3 class="text-lg font-bold text-gray-900 dark:text-white">{{ selectedPlan.name }}</h3>
+              <div class="card subco">
+                <div class="subco__head">
+                  <span class="ko-badge ko-badge--brand">{{ platformLabel(selectedPlan.group_platform || '') }}</span>
+                  <h3 class="subco__name">{{ selectedPlan.name }}</h3>
                 </div>
-                <!-- Price -->
-                <div class="flex items-baseline gap-2">
-                  <span v-if="selectedPlan.original_price" class="text-sm text-gray-400 line-through dark:text-gray-500">
-                    {{ formatSelectedPaymentAmount(selectedPlan.original_price) }}
-                  </span>
-                  <span :class="['text-3xl font-bold', planTextClass]">{{ formatSelectedPaymentAmount(selectedPlan.price) }}</span>
-                  <span class="text-sm text-gray-500 dark:text-gray-400">/ {{ planValiditySuffix }}</span>
+                <div class="subco__price">
+                  <span v-if="selectedPlan.original_price" class="subco__strike">{{ formatSelectedPaymentAmount(selectedPlan.original_price) }}</span>
+                  <span class="subco__amount">{{ formatSelectedPaymentAmount(selectedPlan.price) }}</span>
+                  <span class="subco__per">/ {{ planValiditySuffix }}</span>
                 </div>
-                <!-- Description -->
-                <p v-if="selectedPlan.description" class="mt-2 text-sm leading-relaxed text-gray-500 dark:text-gray-400">
-                  {{ selectedPlan.description }}
-                </p>
-                <!-- Rate + Limits grid -->
-                <div class="mt-3 grid grid-cols-2 gap-3">
-                  <div>
-                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.rate') }}</span>
-                    <div class="flex items-baseline">
-                      <span :class="['text-lg font-bold', planTextClass]">×{{ selectedPlan.rate_multiplier ?? 1 }}</span>
-                    </div>
+                <p v-if="selectedPlan.description" class="subco__desc">{{ selectedPlan.description }}</p>
+                <div class="subco__grid">
+                  <div class="subco__cell">
+                    <span class="subco__k">{{ t('payment.planCard.rate') }}</span>
+                    <span class="subco__v">×{{ selectedPlan.rate_multiplier ?? 1 }}</span>
                   </div>
-                  <div v-if="selectedPlan.daily_limit_usd != null">
-                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.dailyLimit') }}</span>
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">${{ selectedPlan.daily_limit_usd }}</div>
+                  <div v-if="selectedPlan.daily_limit_usd != null" class="subco__cell">
+                    <span class="subco__k">{{ t('payment.planCard.dailyLimit') }}</span>
+                    <span class="subco__v">${{ selectedPlan.daily_limit_usd }}</span>
                   </div>
-                  <div v-if="selectedPlan.weekly_limit_usd != null">
-                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.weeklyLimit') }}</span>
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">${{ selectedPlan.weekly_limit_usd }}</div>
+                  <div v-if="selectedPlan.weekly_limit_usd != null" class="subco__cell">
+                    <span class="subco__k">{{ t('payment.planCard.weeklyLimit') }}</span>
+                    <span class="subco__v">${{ selectedPlan.weekly_limit_usd }}</span>
                   </div>
-                  <div v-if="selectedPlan.monthly_limit_usd != null">
-                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.monthlyLimit') }}</span>
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">${{ selectedPlan.monthly_limit_usd }}</div>
+                  <div v-if="selectedPlan.monthly_limit_usd != null" class="subco__cell">
+                    <span class="subco__k">{{ t('payment.planCard.monthlyLimit') }}</span>
+                    <span class="subco__v">${{ selectedPlan.monthly_limit_usd }}</span>
                   </div>
-                  <div v-if="selectedPlan.daily_limit_usd == null && selectedPlan.weekly_limit_usd == null && selectedPlan.monthly_limit_usd == null">
-                    <span class="text-xs text-gray-400 dark:text-gray-500">{{ t('payment.planCard.quota') }}</span>
-                    <div class="text-lg font-semibold text-gray-800 dark:text-gray-200">{{ t('payment.planCard.unlimited') }}</div>
+                  <div v-if="selectedPlan.daily_limit_usd == null && selectedPlan.weekly_limit_usd == null && selectedPlan.monthly_limit_usd == null" class="subco__cell">
+                    <span class="subco__k">{{ t('payment.planCard.quota') }}</span>
+                    <span class="subco__v">{{ t('payment.planCard.unlimited') }}</span>
                   </div>
                 </div>
               </div>
-              <div v-if="enabledMethods.length >= 1" class="card p-6">
-                <PaymentMethodSelector
+              <div v-if="enabledMethods.length >= 1" class="card subco__pad">
+                <KissopenPaymentMethods
                   :methods="subMethodOptions"
                   :selected="selectedMethod"
                   @select="selectedMethod = $event"
                 />
               </div>
-              <div v-if="feeRate > 0 && selectedPlan.price > 0" class="card p-6">
-                <div class="space-y-2 text-sm">
-                  <div class="flex justify-between">
-                    <span class="text-gray-500 dark:text-gray-400">{{ t('payment.amountLabel') }}</span>
-                    <span class="text-gray-900 dark:text-white">{{ formatSelectedPaymentAmount(selectedPlan.price) }}</span>
-                  </div>
-                  <div class="flex justify-between">
-                    <span class="text-gray-500 dark:text-gray-400">{{ t('payment.fee') }} ({{ feeRate }}%)</span>
-                    <span class="text-gray-900 dark:text-white">{{ formatSelectedPaymentAmount(subFeeAmount) }}</span>
-                  </div>
-                  <div class="flex justify-between border-t border-gray-200 pt-2 dark:border-dark-600">
-                    <span class="font-medium text-gray-700 dark:text-gray-300">{{ t('payment.actualPay') }}</span>
-                    <span class="text-lg font-bold text-primary-600 dark:text-primary-400">{{ formatSelectedPaymentAmount(subTotalAmount) }}</span>
-                  </div>
+              <div v-if="feeRate > 0 && selectedPlan.price > 0" class="card subco__sum">
+                <div class="subco__sum-row">
+                  <span>{{ t('payment.amountLabel') }}</span>
+                  <span>{{ formatSelectedPaymentAmount(selectedPlan.price) }}</span>
+                </div>
+                <div class="subco__sum-row">
+                  <span>{{ t('payment.fee') }} ({{ feeRate }}%)</span>
+                  <span>{{ formatSelectedPaymentAmount(subFeeAmount) }}</span>
+                </div>
+                <div class="subco__sum-row subco__sum-row--total">
+                  <span>{{ t('payment.actualPay') }}</span>
+                  <span>{{ formatSelectedPaymentAmount(subTotalAmount) }}</span>
                 </div>
               </div>
-              <button :class="['btn w-full py-3 text-base font-medium', paymentButtonClass]" :disabled="!canSubmitSubscription || submitting" @click="confirmSubscribe">
-                <span v-if="submitting" class="flex items-center justify-center gap-2">
-                  <span class="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
-                  {{ t('common.processing') }}
-                </span>
+              <button class="ko-btn ko-btn--gradient ko-btn--block subco__pay" :disabled="!canSubmitSubscription || submitting" @click="confirmSubscribe">
+                <span v-if="submitting">{{ t('common.processing') }}</span>
                 <span v-else>{{ t('payment.createOrder') }} {{ formatSelectedPaymentAmount(feeRate > 0 ? subTotalAmount : selectedPlan.price) }}</span>
               </button>
-              <button class="btn btn-secondary w-full" @click="selectedPlan = null">{{ t('common.cancel') }}</button>
+              <button class="ko-btn ko-btn--secondary ko-btn--block" @click="selectedPlan = null">{{ t('common.cancel') }}</button>
             </template>
             <!-- Plan list -->
             <template v-else>
@@ -259,6 +242,7 @@ import type { SubscriptionPlan, CheckoutInfoResponse, CreateOrderResult, OrderTy
 import AppLayout from '@/components/layout/AppLayout.vue'
 import AmountInput from '@/components/payment/AmountInput.vue'
 import PaymentMethodSelector from '@/components/payment/PaymentMethodSelector.vue'
+import KissopenPaymentMethods from '@/components/payment/KissopenPaymentMethods.vue'
 import { METHOD_ORDER, getPaymentPopupFeatures } from '@/components/payment/providerConfig'
 import {
   PAYMENT_RECOVERY_STORAGE_KEY,
@@ -271,7 +255,7 @@ import {
   type PaymentRecoverySnapshot,
   writePaymentRecoverySnapshot,
 } from '@/components/payment/paymentFlow'
-import { platformAccentBarClass, platformBadgeLightClass, platformBadgeClass, platformTextClass, platformLabel } from '@/utils/platformColors'
+import { platformAccentBarClass, platformBadgeLightClass, platformLabel } from '@/utils/platformColors'
 import SubscriptionPlanCard from '@/components/payment/SubscriptionPlanCard.vue'
 import PaymentStatusPanel from '@/components/payment/PaymentStatusPanel.vue'
 import Icon from '@/components/icons/Icon.vue'
@@ -636,10 +620,6 @@ const paymentButtonClass = computed(() => {
   if (m === 'airwallex') return 'btn-airwallex'
   return 'btn-primary'
 })
-
-// Subscription confirm: platform accent colors (clean card, no gradient)
-const planBadgeClass = computed(() => platformBadgeClass(selectedPlan.value?.group_platform || ''))
-const planTextClass = computed(() => platformTextClass(selectedPlan.value?.group_platform || ''))
 
 // Renewal modal state
 const showRenewalModal = ref(false)
@@ -1092,3 +1072,94 @@ onMounted(async () => {
   subscriptionStore.fetchActiveSubscriptions().catch(() => {})
 })
 </script>
+
+<style scoped>
+/* kissopen-styled subscription checkout (the /purchase?plan_id=… view) */
+.subco {
+  padding: 20px;
+}
+.subco__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.subco__name {
+  font: var(--weight-bold) var(--text-xl) var(--font-sans);
+  letter-spacing: -0.01em;
+  color: var(--text-strong);
+}
+.subco__price {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.subco__amount {
+  font: var(--weight-extra) var(--text-3xl) var(--font-sans);
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+.subco__strike {
+  font: var(--text-sm) var(--font-mono);
+  color: var(--text-faint);
+  text-decoration: line-through;
+}
+.subco__per {
+  font: var(--text-sm) var(--font-sans);
+  color: var(--text-faint);
+}
+.subco__desc {
+  font: var(--text-sm) / 1.5 var(--font-sans);
+  color: var(--text-muted);
+  margin: 10px 0 0;
+}
+.subco__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 16px;
+}
+.subco__cell {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.subco__k {
+  font: var(--weight-semibold) var(--text-2xs) var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+.subco__v {
+  font: var(--weight-bold) var(--text-lg) var(--font-sans);
+  color: var(--text-strong);
+}
+.subco__pad {
+  padding: 18px 20px;
+}
+.subco__sum {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+}
+.subco__sum-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font: var(--text-sm) var(--font-sans);
+  color: var(--text-muted);
+}
+.subco__sum-row--total {
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+  font-weight: var(--weight-semibold);
+  color: var(--text-strong);
+}
+.subco__pay {
+  margin-top: 4px;
+}
+</style>

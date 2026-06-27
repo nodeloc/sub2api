@@ -40,25 +40,12 @@
             <p v-if="amountError" class="kc-buy__err">{{ amountError }}</p>
 
             <!-- Payment method -->
-            <div v-if="payMethods.length" class="kc-buy__methods">
-              <div class="kc-buy__methods-label">{{ t('payment.paymentMethod') }}</div>
-              <div class="kc-methods">
-                <button
-                  v-for="m in payMethods"
-                  :key="m.type"
-                  type="button"
-                  class="kc-method"
-                  :class="{ 'kc-method--on': selectedMethod === m.type, 'kc-method--off': !m.available }"
-                  :disabled="!m.available"
-                  @click="m.available && (selectedMethod = m.type)"
-                >
-                  <img :src="methodIcon(m.type)" :alt="t(`payment.methods.${m.type}`)" class="kc-method__icon" />
-                  <span class="kc-method__text">
-                    <span class="kc-method__name">{{ t(`payment.methods.${m.type}`) }}</span>
-                    <span v-if="m.fee_rate > 0" class="kc-method__fee">{{ t('payment.fee') }} {{ m.fee_rate }}%</span>
-                  </span>
-                </button>
-              </div>
+            <div v-if="methodOptions.length" class="kc-buy__methods">
+              <KissopenPaymentMethods
+                :methods="methodOptions"
+                :selected="selectedMethod"
+                @select="selectedMethod = $event"
+              />
             </div>
 
             <!-- Fee / credited summary -->
@@ -229,11 +216,7 @@ import AppLayout from '@/components/layout/AppLayout.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { kitIcons as icons } from '@/components/kit/icons'
 import PaymentStatusPanel from '@/components/payment/PaymentStatusPanel.vue'
-import { METHOD_ORDER } from '@/components/payment/providerConfig'
-import alipayIcon from '@/assets/icons/alipay.svg'
-import wxpayIcon from '@/assets/icons/wxpay.svg'
-import stripeIcon from '@/assets/icons/stripe.svg'
-import airwallexIcon from '@/assets/icons/airwallex.svg'
+import KissopenPaymentMethods from '@/components/payment/KissopenPaymentMethods.vue'
 import { paymentAPI } from '@/api/payment'
 import { getDashboardStats } from '@/api/usage'
 import type { UserDashboardStats } from '@/api/usage'
@@ -290,28 +273,6 @@ function handlePaymentDone() {
   authStore.refreshUser().catch(() => {})
   void loadData()
 }
-
-// Payment methods, kissopen-styled (sorted by canonical order)
-const METHOD_ICONS: Record<string, string> = {
-  alipay: alipayIcon,
-  wxpay: wxpayIcon,
-  stripe: stripeIcon,
-  airwallex: airwallexIcon,
-}
-function methodIcon(type: string): string {
-  if (type.includes('alipay')) return METHOD_ICONS.alipay
-  if (type.includes('wxpay')) return METHOD_ICONS.wxpay
-  if (type === 'airwallex') return METHOD_ICONS.airwallex
-  return METHOD_ICONS[type] || alipayIcon
-}
-const payMethods = computed(() => {
-  const order: readonly string[] = METHOD_ORDER
-  return [...methodOptions.value].sort((a, b) => {
-    const ai = order.indexOf(a.type)
-    const bi = order.indexOf(b.type)
-    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi)
-  })
-})
 
 // Subscription (Go Pro)
 interface LimitWin { used_usd: number; limit_usd: number | null; percentage: number; resets_in_seconds: number | null }
@@ -568,63 +529,6 @@ onMounted(() => {
 }
 .kc-buy__methods {
   margin-bottom: 12px;
-}
-.kc-buy__methods-label {
-  font: var(--weight-semibold) var(--text-sm) var(--font-sans);
-  color: var(--text-strong);
-  margin-bottom: 8px;
-}
-.kc-methods {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-.kc-method {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  height: 52px;
-  padding: 0 12px;
-  background: var(--surface-card);
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  text-align: left;
-  transition: border-color var(--dur-fast) var(--ease-out),
-    box-shadow var(--dur-fast) var(--ease-out),
-    background var(--dur-fast) var(--ease-out);
-}
-.kc-method:hover {
-  border-color: var(--border-strong);
-}
-.kc-method--on {
-  border-color: var(--brand);
-  background: var(--coral-50);
-  box-shadow: var(--shadow-xs);
-}
-.kc-method--off {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-.kc-method__icon {
-  width: 24px;
-  height: 24px;
-  flex: none;
-  object-fit: contain;
-}
-.kc-method__text {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-}
-.kc-method__name {
-  font: var(--weight-semibold) var(--text-sm) var(--font-sans);
-  color: var(--text-strong);
-}
-.kc-method__fee {
-  font: var(--weight-medium) var(--text-2xs) var(--font-sans);
-  color: var(--text-faint);
 }
 .kc-buy__summary {
   display: flex;
