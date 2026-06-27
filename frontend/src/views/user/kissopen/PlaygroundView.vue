@@ -190,7 +190,11 @@ async function send() {
     .map((m) => ({ role: m.role as string, content: m.text }))
   if (systemPrompt.value.trim()) history.unshift({ role: 'system', content: systemPrompt.value.trim() })
   const payload: Record<string, unknown> = { model: model.value, stream: stream.value, messages: history }
-  if (temperature.value != null) payload.temperature = temperature.value
+  if (temperature.value != null) {
+    // Anthropic/Claude only accept temperature 0..1; others (OpenAI/Gemini) allow 0..2.
+    const tMax = /claude|anthropic/i.test(model.value) ? 1 : 2
+    payload.temperature = Math.min(Math.max(temperature.value, 0), tMax)
+  }
 
   try {
     const res = await fetch(`${apiBase}/chat/completions`, {

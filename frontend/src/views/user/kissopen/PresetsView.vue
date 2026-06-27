@@ -56,10 +56,10 @@
           </div>
 
           <div class="pr-field pr-temp">
-            <label class="ko-field__label">{{ t('presets.temperature') }}</label>
+            <label class="ko-field__label">{{ t('presets.temperature') }} <span class="pr-temp__range">0–{{ tempMax }}</span></label>
             <div class="pr-temp__row">
-              <input v-model.number="tempModel" type="range" min="0" max="2" step="0.1" class="pr-range" />
-              <input v-model.number="tempModel" type="number" min="0" max="2" step="0.1" class="ko-input ko-input--mono pr-temp__num" />
+              <input v-model.number="tempModel" type="range" min="0" :max="tempMax" step="0.1" class="pr-range" />
+              <input v-model.number="tempModel" type="number" min="0" :max="tempMax" step="0.1" class="ko-input ko-input--mono pr-temp__num" />
             </div>
           </div>
 
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, h } from 'vue'
+import { ref, computed, watch, onMounted, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import { kitIcons as icons } from '@/components/kit/icons'
@@ -106,10 +106,19 @@ const blank = (): Draft => ({ id: null, name: '', model: '', system: '', tempera
 const draft = ref<Draft>(blank())
 const modelOptions = ref<string[]>([])
 
-// Temperature with a numeric proxy so the range/number inputs stay in sync.
+// Anthropic/Claude only accept temperature 0..1; OpenAI/Gemini allow 0..2.
+const tempMax = computed(() => (/claude|anthropic/i.test(draft.value.model || '') ? 1 : 2))
+
+// Temperature with a numeric proxy so the range/number inputs stay in sync,
+// clamped to the selected model's valid range.
 const tempModel = computed<number>({
-  get: () => (draft.value.temperature == null ? 1 : draft.value.temperature),
-  set: (v) => { draft.value.temperature = Number.isFinite(v) ? v : null },
+  get: () => (draft.value.temperature == null ? Math.min(1, tempMax.value) : draft.value.temperature),
+  set: (v) => { draft.value.temperature = Number.isFinite(v) ? Math.min(Math.max(v, 0), tempMax.value) : null },
+})
+
+// Clamp an already-set temperature when switching to a stricter-range model.
+watch(tempMax, (max) => {
+  if (draft.value.temperature != null && draft.value.temperature > max) draft.value.temperature = max
 })
 
 function newPreset() {
@@ -263,6 +272,11 @@ onMounted(() => {
   resize: vertical;
   min-height: 90px;
   line-height: 1.5;
+}
+.pr-temp__range {
+  font: var(--text-2xs, 11px) var(--font-mono);
+  color: var(--text-faint);
+  margin-left: 4px;
 }
 .pr-temp__row {
   display: flex;
