@@ -483,7 +483,14 @@ export default {
     updatedAt: 'Updated: {date}',
     empty: 'No content',
     loginAgreement: 'Login Agreement',
-    adminCompliance: 'Deployment and Operation Compliance Commitment'
+    adminCompliance: 'Deployment and Operation Compliance Commitment',
+    docTitles: {
+      terms: 'Terms of Service',
+      usagePolicy: 'Usage Policy',
+      supportedRegions: 'Supported Regions',
+      serviceSpecificTerms: 'Service-Specific Terms',
+      privacy: 'Privacy Policy'
+    }
   },
 
   // Navigation

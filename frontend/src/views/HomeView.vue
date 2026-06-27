@@ -277,10 +277,11 @@ import { ref, computed, onMounted, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
+import { legalDocTitleKey } from '@/utils/legalDocs'
 import Icon from '@/components/icons/Icon.vue'
 import ModelIcon from '@/components/common/ModelIcon.vue'
 
-const { t, tm, rt } = useI18n()
+const { t, te, tm, rt } = useI18n()
 
 // Read a localized string array (e.g. pricing feature lists)
 function tArr(key: string): string[] {
@@ -465,7 +466,10 @@ const footerCols = computed(() => {
   if (legalDocs.value.length) {
     cols.push({
       head: t('home.landing.footer.legal'),
-      items: legalDocs.value.map((d) => ({ label: d.title, href: `/legal/${d.id}` })),
+      items: legalDocs.value.map((d) => {
+        const key = legalDocTitleKey(d.id)
+        return { label: key && te(key) ? t(key) : d.title, href: `/legal/${d.id}` }
+      }),
     })
   }
   return cols

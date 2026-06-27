@@ -70,10 +70,15 @@ import { useI18n } from 'vue-i18n'
 import { useAppStore, useAuthStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
+import { legalDocTitleKey } from '@/utils/legalDocs'
 
 defineProps<{ active?: string }>()
 
-const { t } = useI18n()
+const { t, te } = useI18n()
+function legalTitle(id: string, fallback: string): string {
+  const key = legalDocTitleKey(id)
+  return key && te(key) ? t(key) : fallback
+}
 const appStore = useAppStore()
 const authStore = useAuthStore()
 const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'kissopen')
@@ -120,7 +125,7 @@ const cols = computed<{ head: string; items: { label: string; to?: string }[] }[
   if (legalDocs.value.length) {
     result.push({
       head: t('home.landing.footer.legal'),
-      items: legalDocs.value.map((d) => ({ label: d.title, to: `/legal/${d.id}` })),
+      items: legalDocs.value.map((d) => ({ label: legalTitle(d.id, d.title), to: `/legal/${d.id}` })),
     })
   }
   return result

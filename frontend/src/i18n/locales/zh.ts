@@ -483,7 +483,14 @@ export default {
     updatedAt: '更新日期：{date}',
     empty: '暂无正文内容',
     loginAgreement: '登录条款',
-    adminCompliance: '部署与运营合规承诺'
+    adminCompliance: '部署与运营合规承诺',
+    docTitles: {
+      terms: '服务条款',
+      usagePolicy: '使用政策',
+      supportedRegions: '支持的国家和地区',
+      serviceSpecificTerms: '服务特定条款',
+      privacy: '隐私政策'
+    }
   },
 
   // Navigation
