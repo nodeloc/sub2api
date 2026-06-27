@@ -33,8 +33,9 @@ async function copy() {
   color: #f4edea;
   border-radius: var(--radius-md);
   padding: 14px 16px;
-  font: var(--type-mono);
-  line-height: 1.6;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 13px;
+  line-height: 1.55;
   overflow-x: auto;
   position: relative;
 }
@@ -65,6 +66,7 @@ async function copy() {
 .ko-code__pre {
   margin: 0;
   white-space: pre;
-  font: var(--type-mono);
+  font-family: inherit;
+  font-size: inherit;
 }
 </style>

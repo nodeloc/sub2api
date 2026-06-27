@@ -60,6 +60,17 @@
     @apply bg-primary-500/20 text-primary-900 dark:text-primary-100;
   }
 
+  /* Code blocks have a dark background — keep selected text light & readable
+     (the default ::selection forces dark text, which vanishes on the dark bg). */
+  .ko-code ::selection {
+    background: rgba(244, 154, 182, 0.42);
+    color: #fff;
+  }
+  .ko-code ::-moz-selection {
+    background: rgba(244, 154, 182, 0.42);
+    color: #fff;
+  }
+
 
 }
 
