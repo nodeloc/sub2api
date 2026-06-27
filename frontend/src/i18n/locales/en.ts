@@ -486,6 +486,21 @@ export default {
   },
 
   // Navigation
+  account: {
+    title: 'Account',
+    sub: 'Manage your personal profile, sign-in methods and security.',
+    navProfile: 'Profile',
+    navLogins: 'Login & connections',
+    navSecurity: 'Password & 2FA',
+    photoTitle: 'Profile photo',
+    photoDesc: 'PNG, JPG or GIF, up to 2 MB. Shown across kissopen.',
+    detailsTitle: 'Personal details',
+    detailsDesc: 'Your display name and account information.',
+    connTitle: 'Connected accounts',
+    connDesc: 'Bind sign-in methods so you can log in any way you like.',
+    passwordTitle: 'Change password',
+    passwordDesc: 'Use at least 8 characters, with a number and a symbol.',
+  },
   logs: {
     title: 'Logs',
     description: 'View your request logs and history.',

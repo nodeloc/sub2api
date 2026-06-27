@@ -486,6 +486,21 @@ export default {
   },
 
   // Navigation
+  account: {
+    title: '账户',
+    sub: '管理你的个人资料、登录方式与安全设置。',
+    navProfile: '个人资料',
+    navLogins: '登录与绑定',
+    navSecurity: '密码与两步验证',
+    photoTitle: '头像',
+    photoDesc: '支持 PNG / JPG / GIF,最大 2MB,在 kissopen 各处显示。',
+    detailsTitle: '个人信息',
+    detailsDesc: '你的显示名与账号信息。',
+    connTitle: '已绑定的登录方式',
+    connDesc: '绑定多种登录方式,之后可以用任意一种登录。',
+    passwordTitle: '修改密码',
+    passwordDesc: '至少 8 位,建议包含数字和符号。',
+  },
   logs: {
     title: '日志',
     description: '查看你的请求日志与历史记录。',
