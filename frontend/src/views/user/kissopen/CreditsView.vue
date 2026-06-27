@@ -8,21 +8,72 @@
         <div class="card kc-buy">
           <div class="kc-buy__label">{{ t('credits.currentBalance') }}</div>
           <div class="kc-buy__balance">${{ balance }}</div>
-          <div class="kc-buy__add">{{ t('credits.addCredits') }}</div>
-          <div class="kc-buy__presets">
+
+          <p v-if="balanceDisabled" class="kc-buy__disabled">{{ t('credits.rechargeDisabled') }}</p>
+          <template v-else>
+            <div class="kc-buy__add">{{ t('credits.addCredits') }}</div>
+            <div class="kc-buy__presets">
+              <button
+                v-for="pr in presets"
+                :key="pr"
+                class="ko-btn kc-preset"
+                :class="{ 'kc-preset--on': payAmount === pr }"
+                @click="payAmount = pr"
+              >
+                ${{ pr }}
+              </button>
+            </div>
+
+            <!-- Custom amount -->
+            <div class="kc-buy__custom">
+              <span class="kc-buy__cur">$</span>
+              <input
+                v-model.number="payAmount"
+                type="number"
+                min="0"
+                inputmode="decimal"
+                class="kc-buy__custom-input"
+                :placeholder="t('credits.customPlaceholder')"
+                :aria-label="t('credits.customAmount')"
+              />
+            </div>
+            <p v-if="amountError" class="kc-buy__err">{{ amountError }}</p>
+
+            <!-- Payment method -->
+            <div v-if="enabledMethods.length" class="kc-buy__methods">
+              <PaymentMethodSelector
+                :methods="methodOptions"
+                :selected="selectedMethod"
+                @select="selectedMethod = $event"
+              />
+            </div>
+
+            <!-- Fee / credited summary -->
+            <div v-if="validAmount > 0 && (feeRate > 0 || balanceRechargeMultiplier !== 1)" class="kc-buy__summary">
+              <div v-if="feeRate > 0" class="kc-buy__sum-row">
+                <span>{{ t('payment.fee') }} ({{ feeRate }}%)</span>
+                <span>{{ formatAmount(feeAmount) }}</span>
+              </div>
+              <div v-if="feeRate > 0" class="kc-buy__sum-row kc-buy__sum-row--total">
+                <span>{{ t('payment.actualPay') }}</span>
+                <span>{{ formatAmount(totalAmount) }}</span>
+              </div>
+              <div v-if="balanceRechargeMultiplier !== 1" class="kc-buy__sum-row">
+                <span>{{ t('credits.creditedAfter') }}</span>
+                <span>${{ creditedAmount.toFixed(2) }}</span>
+              </div>
+            </div>
+
             <button
-              v-for="pr in presets"
-              :key="pr"
-              class="ko-btn kc-preset"
-              :class="{ 'kc-preset--on': amount === pr }"
-              @click="amount = pr"
+              class="ko-btn ko-btn--primary ko-btn--block kc-buy__pay"
+              :disabled="!canSubmit || paying"
+              @click="submitRecharge"
             >
-              ${{ pr }}
+              <component :is="icons.Wallet" :size="16" />
+              {{ paying ? t('common.processing') : t('credits.add', { n: payAmount || 0 }) }}
             </button>
-          </div>
-          <router-link :to="`/purchase?amount=${amount}`" class="ko-btn ko-btn--primary ko-btn--block">
-            <component :is="icons.Wallet" :size="16" /> {{ t('credits.add', { n: amount }) }}
-          </router-link>
+          </template>
+
           <button type="button" class="kc-buy__redeem" @click="openRedeem">{{ t('credits.redeemCode') }} →</button>
         </div>
 
@@ -126,6 +177,34 @@
         </div>
       </transition>
     </Teleport>
+
+    <!-- Payment (QR / status) modal -->
+    <Teleport to="body">
+      <transition name="kc-fade">
+        <div v-if="paymentPhase === 'paying'" class="kc-modal-bk" @click.self="resetPayment">
+          <div class="kc-pay-modal" role="dialog" aria-modal="true">
+            <div class="kc-modal__head">
+              <h3 class="kc-modal__title">{{ t('credits.payTitle') }}</h3>
+              <button class="ko-iconbtn ko-iconbtn--outline" :aria-label="t('common.close')" @click="resetPayment">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <PaymentStatusPanel
+              :order-id="paymentState.orderId"
+              :qr-code="paymentState.qrCode"
+              :expires-at="paymentState.expiresAt"
+              :payment-type="paymentState.paymentType"
+              :pay-url="paymentState.payUrl"
+              :order-type="paymentState.orderType"
+              :currency="paymentState.currency || selectedCurrency"
+              @done="handlePaymentDone"
+              @success="handlePaymentSuccess"
+              @settled="onPaymentSettled"
+            />
+          </div>
+        </div>
+      </transition>
+    </Teleport>
   </AppLayout>
 </template>
 
@@ -136,12 +215,15 @@ import { useAuthStore } from '@/stores/auth'
 import AppLayout from '@/components/layout/AppLayout.vue'
 import LoadingSpinner from '@/components/common/LoadingSpinner.vue'
 import { kitIcons as icons } from '@/components/kit/icons'
+import PaymentMethodSelector from '@/components/payment/PaymentMethodSelector.vue'
+import PaymentStatusPanel from '@/components/payment/PaymentStatusPanel.vue'
 import { paymentAPI } from '@/api/payment'
 import { getDashboardStats } from '@/api/usage'
 import type { UserDashboardStats } from '@/api/usage'
 import redeemAPI from '@/api/redeem'
 import { getActiveSubscriptions, getSubscriptionsProgress } from '@/api/subscriptions'
 import type { UserSubscription } from '@/types'
+import { useRechargeFlow } from '@/composables/useRechargeFlow'
 
 const { t, te } = useI18n()
 const authStore = useAuthStore()
@@ -150,9 +232,48 @@ function statusLabel(s: string) {
   return te(k) ? t(k) : s
 }
 const presets = [10, 25, 50, 100]
-const amount = ref(25)
 const loading = ref(true)
 const stats = ref<UserDashboardStats | null>(null)
+
+// Inline recharge flow (presets + custom amount + payment method + pay)
+const {
+  amount: payAmount,
+  selectedMethod,
+  paymentPhase,
+  paymentState,
+  enabledMethods,
+  balanceDisabled,
+  methodOptions,
+  feeRate,
+  feeAmount,
+  totalAmount,
+  validAmount,
+  balanceRechargeMultiplier,
+  creditedAmount,
+  amountError,
+  canSubmit,
+  submitting: paying,
+  selectedCurrency,
+  formatAmount,
+  init: initRecharge,
+  submitRecharge,
+  resetPayment,
+  onPaymentDone,
+  onPaymentSuccess,
+  onPaymentSettled,
+} = useRechargeFlow()
+
+function handlePaymentSuccess() {
+  onPaymentSuccess(() => {
+    authStore.refreshUser().catch(() => {})
+    void loadData()
+  })
+}
+function handlePaymentDone() {
+  onPaymentDone()
+  authStore.refreshUser().catch(() => {})
+  void loadData()
+}
 
 // Subscription (Go Pro)
 interface LimitWin { used_usd: number; limit_usd: number | null; percentage: number; resets_in_seconds: number | null }
@@ -279,7 +400,11 @@ async function loadData() {
   loading.value = false
 }
 
-onMounted(loadData)
+onMounted(() => {
+  payAmount.value = 25
+  void initRecharge()
+  void loadData()
+})
 </script>
 
 <style scoped>
@@ -359,6 +484,88 @@ onMounted(loadData)
 .kc-buy__redeem:hover {
   color: var(--coral-800, var(--coral-700));
   text-decoration: underline;
+}
+.kc-buy__disabled {
+  font: var(--weight-medium) var(--text-sm) var(--font-sans);
+  color: var(--text-muted);
+  margin: 14px 0 4px;
+}
+.kc-buy__custom {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 42px;
+  padding: 0 13px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  margin-bottom: 12px;
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.kc-buy__custom:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: var(--ring-focus);
+}
+.kc-buy__cur {
+  font: var(--weight-semibold) var(--text-base) var(--font-sans);
+  color: var(--text-faint);
+}
+.kc-buy__custom-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  font: var(--weight-semibold) var(--text-base) var(--font-sans);
+  color: var(--text-strong);
+}
+.kc-buy__custom-input::placeholder {
+  font-weight: var(--weight-medium);
+  color: var(--text-faint);
+}
+.kc-buy__err {
+  font: var(--weight-medium) var(--text-xs) var(--font-sans);
+  color: var(--danger, #d64545);
+  margin: -4px 0 12px;
+}
+.kc-buy__methods {
+  margin-bottom: 12px;
+}
+.kc-buy__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+.kc-buy__sum-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font: var(--text-sm) var(--font-sans);
+  color: var(--text-muted);
+}
+.kc-buy__sum-row--total {
+  padding-top: 6px;
+  border-top: 1px solid var(--border-subtle);
+  font-weight: var(--weight-semibold);
+  color: var(--text-strong);
+}
+.kc-buy__pay {
+  margin-top: 2px;
+}
+.kc-pay-modal {
+  width: min(460px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg, 14px);
+  box-shadow: 0 20px 50px rgba(20, 12, 10, 0.2);
+  padding: 22px;
 }
 
 /* redeem modal */
