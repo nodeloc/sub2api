@@ -223,6 +223,7 @@ const props = withDefaults(
     wechatEnabled?: boolean
     wechatOpenEnabled?: boolean
     wechatMpEnabled?: boolean
+    hiddenProviders?: UserAuthProvider[]
     embedded?: boolean
     compact?: boolean
   }>(),
@@ -234,6 +235,7 @@ const props = withDefaults(
     wechatEnabled: false,
     wechatOpenEnabled: undefined,
     wechatMpEnabled: undefined,
+    hiddenProviders: () => [],
     embedded: false,
     compact: false,
   }
@@ -470,7 +472,7 @@ const providerItems = computed(() => [
     canUnbind: Boolean(getBindingStatus('wechat') && getBindingDetails('wechat')?.can_unbind),
     details: getBindingDetails('wechat'),
   },
-])
+].filter((item) => !props.hiddenProviders.includes(item.provider)))
 
 function providerInitial(provider: UserAuthProvider): string {
   if (provider === 'linuxdo') {

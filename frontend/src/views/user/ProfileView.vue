@@ -81,6 +81,7 @@
                   :wechat-enabled="wechatOAuthEnabled"
                   :wechat-open-enabled="wechatOAuthOpenEnabled"
                   :wechat-mp-enabled="wechatOAuthMPEnabled"
+                  :hidden-providers="['linuxdo', 'dingtalk', 'wechat']"
                   embedded
                 />
               </div>
