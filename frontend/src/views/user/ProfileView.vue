@@ -46,15 +46,6 @@
               </div>
             </section>
 
-            <!-- Go Pro (fork-local kissopen upgrade entry) -->
-            <router-link to="/pro" class="acct-pro">
-              <div>
-                <div class="acct-pro__title">{{ t('pro.title') }}</div>
-                <div class="acct-pro__sub">{{ t('pro.sub') }}</div>
-              </div>
-              <span class="ko-btn ko-btn--primary ko-btn--sm">{{ t('pro.viewPlans') }}</span>
-            </router-link>
-
             <ProfileBalanceNotifyCard
               v-if="user && balanceLowNotifyEnabled"
               :enabled="user.balance_notify_enabled ?? true"
@@ -272,33 +263,6 @@ onMounted(async () => {
 }
 .acct-card__body {
   padding: 4px 22px 20px;
-}
-
-/* Go Pro entry */
-.acct-pro {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 20px;
-  margin-bottom: 18px;
-  border-radius: var(--radius-lg, 14px);
-  border: 1px solid var(--coral-200);
-  background: var(--grad-brand-soft);
-  text-decoration: none;
-  transition: box-shadow var(--dur-fast) var(--ease-out);
-}
-.acct-pro:hover {
-  box-shadow: var(--shadow-md);
-}
-.acct-pro__title {
-  font: var(--weight-bold) var(--text-base) var(--font-sans);
-  color: var(--coral-800, var(--coral-700));
-}
-.acct-pro__sub {
-  font: var(--text-sm) var(--font-sans);
-  color: var(--text-muted);
-  margin-top: 2px;
 }
 
 /* Contact support */

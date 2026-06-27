@@ -633,6 +633,7 @@ export default {
     transactions: '交易记录',
     creditPurchase: '额度充值',
     subscription: '订阅',
+    noSubscription: '暂无订阅',
     redeem: '兑换码',
     none: '暂无交易记录。',
     status: {

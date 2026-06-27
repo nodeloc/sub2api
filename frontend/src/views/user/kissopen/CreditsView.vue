@@ -41,6 +41,32 @@
         </div>
       </div>
 
+      <!-- Subscription (Go Pro / plan) -->
+      <div class="card kc-sub">
+        <div class="kc-sub__head">
+          <div>
+            <div class="kc-sub__label">{{ t('credits.subscription') }}</div>
+            <div v-if="activeSub" class="kc-sub__plan">{{ activeSub.group?.name || t('pro.yourPlan') }}</div>
+            <div v-else class="kc-sub__plan kc-sub__plan--none">{{ t('credits.noSubscription') }}</div>
+          </div>
+          <router-link to="/pro" class="ko-btn ko-btn--primary ko-btn--sm">
+            {{ activeSub ? t('pro.manage') : t('pro.title') }}
+          </router-link>
+        </div>
+        <div v-if="activeSub && limitWindows.length" class="kc-sub__limits">
+          <div v-for="lw in limitWindows" :key="lw.key" class="kc-sub__limit">
+            <div class="kc-sub__limit-top">
+              <span class="kc-sub__limit-label">{{ lw.label }}</span>
+              <span class="kc-sub__limit-val">
+                ${{ (lw.w.used_usd || 0).toFixed(2) }}<span class="kc-sub__limit-cap"> / {{ lw.w.limit_usd != null ? '$' + lw.w.limit_usd : t('pro.unlimited') }}</span>
+              </span>
+            </div>
+            <div class="kc-sub__bar"><span class="kc-sub__fill" :style="{ width: Math.min(100, lw.w.percentage || 0) + '%' }"></span></div>
+          </div>
+        </div>
+        <p v-else-if="!activeSub" class="kc-sub__cta">{{ t('pro.sub') }}</p>
+      </div>
+
       <div class="ko-alert ko-alert--info kc-info">
         <span class="ko-alert__icon"><component :is="icons.Sparkle" :size="20" /></span>
         <div>
@@ -114,6 +140,8 @@ import { paymentAPI } from '@/api/payment'
 import { getDashboardStats } from '@/api/usage'
 import type { UserDashboardStats } from '@/api/usage'
 import redeemAPI from '@/api/redeem'
+import { getActiveSubscriptions, getSubscriptionsProgress } from '@/api/subscriptions'
+import type { UserSubscription } from '@/types'
 
 const { t, te } = useI18n()
 const authStore = useAuthStore()
@@ -125,6 +153,34 @@ const presets = [10, 25, 50, 100]
 const amount = ref(25)
 const loading = ref(true)
 const stats = ref<UserDashboardStats | null>(null)
+
+// Subscription (Go Pro)
+interface LimitWin { used_usd: number; limit_usd: number | null; percentage: number; resets_in_seconds: number | null }
+const activeSub = ref<UserSubscription | null>(null)
+const subProgress = ref<{ daily?: LimitWin | null; weekly?: LimitWin | null; monthly?: LimitWin | null } | null>(null)
+type LimitRow = { key: string; label: string; w: LimitWin }
+const limitWindows = computed<LimitRow[]>(() => {
+  const p = subProgress.value
+  if (!p) return []
+  return [
+    { key: 'daily', label: t('pro.daily'), w: p.daily ?? null },
+    { key: 'weekly', label: t('pro.weekly'), w: p.weekly ?? null },
+    { key: 'monthly', label: t('pro.monthly'), w: p.monthly ?? null },
+  ].filter((x): x is LimitRow => x.w != null)
+})
+async function loadSubscription() {
+  try {
+    const subs = await getActiveSubscriptions()
+    activeSub.value = (subs || []).find((s) => s.status === 'active') || null
+    if (activeSub.value) {
+      const list = (await getSubscriptionsProgress()) as unknown as Array<{ progress?: { id?: number; daily?: LimitWin | null; weekly?: LimitWin | null; monthly?: LimitWin | null } }>
+      const item = (list || []).find((x) => x?.progress?.id === activeSub.value!.id) || (list || [])[0]
+      subProgress.value = item?.progress || null
+    }
+  } catch (e) {
+    console.error('Failed to load subscription:', e)
+  }
+}
 
 // Redeem-code modal
 const showRedeem = ref(false)
@@ -181,6 +237,7 @@ function fmtDate(s?: string) {
 }
 
 async function loadData() {
+  void loadSubscription()
   try {
     stats.value = await getDashboardStats()
   } catch (e) {
@@ -395,6 +452,80 @@ onMounted(loadData)
 }
 .kc-info {
   margin-bottom: 6px;
+}
+.kc-sub {
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.kc-sub__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+.kc-sub__label {
+  font: var(--weight-semibold) var(--text-2xs) var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}
+.kc-sub__plan {
+  font: var(--weight-extra) var(--text-xl) var(--font-sans);
+  color: var(--text-strong);
+  margin-top: 3px;
+}
+.kc-sub__plan--none {
+  font: var(--weight-semibold) var(--text-base) var(--font-sans);
+  color: var(--text-muted);
+}
+.kc-sub__cta {
+  font: var(--text-sm) var(--font-sans);
+  color: var(--text-muted);
+  margin-top: 10px;
+  max-width: 540px;
+}
+.kc-sub__limits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+.kc-sub__limit-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.kc-sub__limit-label {
+  font: var(--weight-semibold) var(--text-2xs) var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-faint);
+}
+.kc-sub__limit-val {
+  font: var(--weight-semibold) var(--text-xs) var(--font-mono);
+  color: var(--text-strong);
+}
+.kc-sub__limit-cap {
+  color: var(--text-faint);
+  font-weight: var(--weight-medium);
+}
+.kc-sub__bar {
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--warm-200);
+  overflow: hidden;
+}
+.kc-sub__fill {
+  display: block;
+  height: 100%;
+  background: var(--grad-brand);
+}
+@media (max-width: 640px) {
+  .kc-sub__limits {
+    grid-template-columns: 1fr;
+  }
 }
 .kc-h3 {
   font: var(--weight-semibold) var(--text-xl) var(--font-sans);

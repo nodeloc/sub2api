@@ -633,6 +633,7 @@ export default {
     transactions: 'Transactions',
     creditPurchase: 'Credit purchase',
     subscription: 'Subscription',
+    noSubscription: 'No active plan',
     redeem: 'Redeem code',
     none: 'No transactions yet.',
     status: {
