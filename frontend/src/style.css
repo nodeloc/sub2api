@@ -62,11 +62,13 @@
 
   /* Code blocks have a dark background — keep selected text light & readable
      (the default ::selection forces dark text, which vanishes on the dark bg). */
-  .ko-code ::selection {
+  .ko-code ::selection,
+  .lp-code ::selection {
     background: rgba(244, 154, 182, 0.42);
     color: #fff;
   }
-  .ko-code ::-moz-selection {
+  .ko-code ::-moz-selection,
+  .lp-code ::-moz-selection {
     background: rgba(244, 154, 182, 0.42);
     color: #fff;
   }
