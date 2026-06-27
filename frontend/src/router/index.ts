@@ -100,6 +100,42 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/kit/KitAboutView.vue'),
+    meta: { requiresAuth: false, title: 'About' }
+  },
+  {
+    path: '/blog',
+    name: 'Blog',
+    component: () => import('@/views/kit/KitBlogView.vue'),
+    meta: { requiresAuth: false, title: 'Blog' }
+  },
+  {
+    path: '/careers',
+    name: 'Careers',
+    component: () => import('@/views/kit/KitCareersView.vue'),
+    meta: { requiresAuth: false, title: 'Careers' }
+  },
+  {
+    path: '/changelog',
+    name: 'Changelog',
+    component: () => import('@/views/kit/KitChangelogView.vue'),
+    meta: { requiresAuth: false, title: 'Changelog' }
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('@/views/kit/KitContactView.vue'),
+    meta: { requiresAuth: false, title: 'Contact' }
+  },
+  {
+    path: '/status',
+    name: 'Status',
+    component: () => import('@/views/kit/KitStatusView.vue'),
+    meta: { requiresAuth: false, title: 'Status' }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/auth/LoginView.vue'),

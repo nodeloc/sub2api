@@ -249,6 +249,7 @@ r = client.chat.completions.create(
             <span class="lp-logo-mark">{{ siteName }}</span>
           </a>
           <p class="lp-footer-tag">{{ t('home.landing.footer.tagline') }}</p>
+          <a href="/status" class="lp-footer-status"><i class="lp-footer-status-dot"></i>{{ t('marketing.footer.statusOperational') }}</a>
         </div>
         <div v-for="col in footerCols" :key="col.head" class="lp-footer-col">
           <div class="lp-footer-head">{{ col.head }}</div>
@@ -438,15 +439,26 @@ const footerCols = computed(() => {
       head: t('home.landing.footer.product'),
       items: [
         { label: t('home.landing.nav.models'), href: '#models' },
-        { label: t('home.landing.nav.pricing'), href: '#pricing' },
-        { label: t('home.landing.nav.how'), href: '#how' },
+        { label: t('marketing.footer.playground'), href: '/playground' },
+        { label: t('home.landing.nav.pricing'), href: '/pricing' },
+        { label: t('marketing.footer.status'), href: '/status' },
       ],
     },
     {
       head: t('home.landing.footer.developers'),
       items: [
         { label: t('home.landing.nav.docs'), href: docUrl.value || '/docs', external: !!docUrl.value },
-        { label: t('home.landing.nav.signIn'), href: '/login' },
+        { label: t('marketing.footer.apiKeys'), href: '/keys' },
+        { label: t('marketing.footer.changelog'), href: '/changelog' },
+      ],
+    },
+    {
+      head: t('home.landing.footer.company'),
+      items: [
+        { label: t('marketing.footer.about'), href: '/about' },
+        { label: t('marketing.footer.blog'), href: '/blog' },
+        { label: t('marketing.footer.careers'), href: '/careers' },
+        { label: t('marketing.footer.contact'), href: '/contact' },
       ],
     },
   ]
@@ -1148,10 +1160,33 @@ section {
 .lp-footer-grid {
   padding: 48px 28px;
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  grid-template-columns: 1.6fr repeat(4, minmax(0, 1fr));
   gap: 24px;
 }
-@media (max-width: 760px) {
+.lp-footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  font: var(--text-xs) var(--font-sans);
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.lp-footer-status:hover {
+  color: var(--text-strong);
+}
+.lp-footer-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green-500, #2f9e6e);
+}
+@media (max-width: 880px) {
+  .lp-footer-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
   .lp-footer-grid {
     grid-template-columns: 1fr 1fr;
   }

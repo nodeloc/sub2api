@@ -45,6 +45,9 @@
             <span class="km-logo__name">{{ siteName }}</span>
           </router-link>
           <p class="km-footer__tag">{{ t('marketing.footer.tag') }}</p>
+          <router-link to="/status" class="km-footer__status">
+            <i class="km-footer__status-dot"></i>{{ t('marketing.footer.statusOperational') }}
+          </router-link>
         </div>
         <div v-for="col in cols" :key="col.head" class="km-footer__col">
           <div class="km-footer__head">{{ col.head }}</div>
@@ -99,12 +102,19 @@ const cols = computed<{ head: string; items: { label: string; to?: string }[] }[
       { label: t('home.landing.nav.models'), to: '/models' },
       { label: t('marketing.footer.playground'), to: '/playground' },
       { label: t('home.landing.nav.pricing'), to: '/pricing' },
-      { label: t('marketing.footer.credits'), to: '/credits' },
+      { label: t('marketing.footer.status'), to: '/status' },
     ] },
     { head: t('marketing.footer.devHead'), items: [
       { label: t('home.landing.nav.docs'), to: '/docs' },
-      { label: t('marketing.footer.quickstart'), to: '/docs' },
+      { label: t('marketing.footer.apiReference'), to: '/docs' },
       { label: t('marketing.footer.apiKeys'), to: '/keys' },
+      { label: t('marketing.footer.changelog'), to: '/changelog' },
+    ] },
+    { head: t('marketing.footer.companyHead'), items: [
+      { label: t('marketing.footer.about'), to: '/about' },
+      { label: t('marketing.footer.blog'), to: '/blog' },
+      { label: t('marketing.footer.careers'), to: '/careers' },
+      { label: t('marketing.footer.contact'), to: '/contact' },
     ] },
   ]
   if (legalDocs.value.length) {
@@ -223,10 +233,15 @@ const cols = computed<{ head: string; items: { label: string; to?: string }[] }[
 .km-footer__grid {
   padding: 48px 28px;
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  grid-template-columns: 1.6fr repeat(4, minmax(0, 1fr));
   gap: 24px;
 }
-@media (max-width: 760px) {
+@media (max-width: 880px) {
+  .km-footer__grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media (max-width: 560px) {
   .km-footer__grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -236,6 +251,24 @@ const cols = computed<{ head: string; items: { label: string; to?: string }[] }[
   color: var(--text-faint);
   margin-top: 12px;
   max-width: 230px;
+}
+.km-footer__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  font: var(--text-xs) var(--font-sans);
+  color: var(--text-muted);
+  text-decoration: none;
+}
+.km-footer__status:hover {
+  color: var(--text-strong);
+}
+.km-footer__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green-500, #2f9e6e);
 }
 .km-footer__head {
   font: var(--weight-semibold) var(--text-2xs) var(--font-sans);
