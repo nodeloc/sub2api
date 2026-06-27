@@ -9,7 +9,7 @@
     fill="currentColor"
     fill-rule="evenodd"
   >
-    <path v-for="(p, idx) in iconInfo.paths" :key="idx" :d="p" :fill="iconInfo.color" />
+    <path v-for="(p, idx) in iconInfo.paths" :key="idx" :d="p" :fill="mono ? 'currentColor' : iconInfo.color" />
   </svg>
   <span v-else class="model-icon-fallback" :style="{ width: size, height: size, fontSize: `calc(${size} * 0.5)` }">
     {{ fallbackText }}
@@ -22,8 +22,11 @@ import { computed } from 'vue'
 const props = withDefaults(defineProps<{
   model: string
   size?: string
+  /** Paint the glyph in currentColor instead of the brand color (for muted logo strips). */
+  mono?: boolean
 }>(), {
-  size: '18px'
+  size: '18px',
+  mono: false
 })
 
 interface IconData {

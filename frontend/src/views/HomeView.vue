@@ -91,7 +91,10 @@
     <div class="lp-wrap lp-logos">
       <div class="lp-logos-eyebrow">{{ t('home.landing.logos.eyebrow') }}</div>
       <div class="lp-logos-row">
-        <span v-for="n in providerNames" :key="n" class="lp-logos-name">{{ n }}</span>
+        <span v-for="p in providers" :key="p.name" class="lp-logos-name">
+          <ModelIcon :model="p.icon" mono size="22px" class="lp-logos-icon" />
+          {{ p.name }}
+        </span>
       </div>
     </div>
 
@@ -327,7 +330,15 @@ const heroStats = computed(() => [
   { value: '0', label: t('home.landing.stats.lockin') },
 ])
 
-const providerNames = ['Anthropic', 'OpenAI', 'Google', 'Meta', 'Mistral', 'DeepSeek']
+// `icon` is a model keyword ModelIcon recognizes (the brand names alone don't match).
+const providers = [
+  { name: 'Anthropic', icon: 'claude' },
+  { name: 'OpenAI', icon: 'gpt' },
+  { name: 'Google', icon: 'gemini' },
+  { name: 'Meta', icon: 'llama' },
+  { name: 'Mistral', icon: 'mistral' },
+  { name: 'DeepSeek', icon: 'deepseek' },
+]
 
 // Inline lucide-style icons (2px stroke, currentColor)
 const svg = (children: ReturnType<typeof h>[]) =>
@@ -848,10 +859,20 @@ section {
   align-items: center;
 }
 .lp-logos-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
   font-weight: var(--weight-bold);
   font-size: var(--text-lg);
   letter-spacing: -0.01em;
   color: var(--warm-400);
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.lp-logos-name:hover {
+  color: var(--text-strong);
+}
+.lp-logos-icon {
+  flex: none;
 }
 
 /* ---- Bands / sections ---- */
