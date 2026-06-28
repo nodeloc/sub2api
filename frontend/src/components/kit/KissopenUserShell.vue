@@ -65,7 +65,10 @@
           <Icon :name="isDark ? 'sun' : 'moon'" size="md" />
         </button>
         <div class="us-user" @click.stop="menuOpen = !menuOpen">
-          <span class="us-avatar">{{ initial }}</span>
+          <span class="us-avatar">
+            <img v-if="avatarUrl" :src="avatarUrl" alt="" class="us-avatar__img" @error="avatarFailed = true" />
+            <template v-else>{{ initial }}</template>
+          </span>
           <transition name="us-fade">
             <div v-if="menuOpen" class="us-menu" @click.stop>
               <div class="us-menu__email">{{ email }}</div>
@@ -108,6 +111,8 @@ const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appS
 const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '')
 const email = computed(() => authStore.user?.email || '')
 const initial = computed(() => (email.value ? email.value.charAt(0).toUpperCase() : 'U'))
+const avatarFailed = ref(false)
+const avatarUrl = computed(() => (avatarFailed.value ? '' : authStore.user?.avatar_url?.trim() || ''))
 const balance = computed(() => authStore.user?.balance ?? 0)
 
 const collapsed = computed(() => appStore.sidebarCollapsed)
@@ -393,6 +398,12 @@ onBeforeUnmount(() => document.removeEventListener('click', closeMenu))
   background: var(--grad-brand);
   color: #fff;
   font: var(--weight-bold) var(--text-sm) var(--font-sans);
+  overflow: hidden;
+}
+.us-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 .us-menu {
   position: absolute;
