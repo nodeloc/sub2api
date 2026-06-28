@@ -349,10 +349,15 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true, requiresAdmin: false, title: 'Providers' }
   },
   {
-    path: '/playground',
-    name: 'KoPlayground',
+    path: '/chat',
+    name: 'KoChat',
     component: () => import('@/views/user/kissopen/PlaygroundView.vue'),
-    meta: { requiresAuth: true, requiresAdmin: false, title: 'Playground' }
+    meta: { requiresAuth: true, requiresAdmin: false, title: 'Chat' }
+  },
+  {
+    // Backward-compat: old /playground links (incl. ?model=/?preset=) → /chat
+    path: '/playground',
+    redirect: (to) => ({ path: '/chat', query: to.query })
   },
   {
     path: '/presets',

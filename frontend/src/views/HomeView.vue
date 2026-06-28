@@ -440,7 +440,7 @@ const footerCols = computed(() => {
       head: t('home.landing.footer.product'),
       items: [
         { label: t('home.landing.nav.models'), href: '#models' },
-        { label: t('marketing.footer.playground'), href: '/playground' },
+        { label: t('marketing.footer.playground'), href: '/chat' },
         { label: t('home.landing.nav.pricing'), href: '/pricing' },
         { label: t('marketing.footer.status'), href: '/status' },
       ],

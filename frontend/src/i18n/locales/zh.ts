@@ -27,7 +27,7 @@ export default {
         subtitle:
           '一个 API 密钥，畅用所有前沿与开源模型。{name} 会把每个请求路由到你指定的模型——或最便宜且能通过的那个——并在一处统一计费。',
         start: '免费开始',
-        playground: '打开 Playground'
+        playground: '打开对话'
       },
       stats: {
         models: '模型',
@@ -564,7 +564,7 @@ export default {
     models: '模型',
     rankings: '排行',
     providers: '供应商',
-    playground: 'Playground',
+    playground: '对话',
     presets: '预设',
     activity: '活动',
     logs: '日志',
@@ -628,7 +628,7 @@ export default {
       productHead: '产品',
       devHead: '开发者',
       companyHead: '公司',
-      playground: '体验场',
+      playground: '对话',
       credits: '额度',
       quickstart: '快速开始',
       apiKeys: 'API 密钥',
@@ -805,7 +805,7 @@ export default {
       componentsHead: '组件',
       cGateway: 'API 网关',
       cRouting: '模型路由',
-      cPlayground: '体验场',
+      cPlayground: '对话',
       cDashboard: '控制台',
       cBilling: '计费与额度',
       statusOperational: '正常',
@@ -902,7 +902,7 @@ export default {
     billing: '计费方式',
     providers: '个供应商',
     availableVia: '可通过以下分组调用',
-    openInPlayground: '在 Playground 中打开',
+    openInPlayground: '在对话中打开',
     billingToken: '按 token',
     billingPerReq: '按次',
     billingImage: '按图片',
@@ -921,7 +921,7 @@ export default {
     errSend: '请求失败。',
   },
   presets: {
-    sub: '把模型、系统提示词和温度保存为一个命名配置，随后在 Playground 中直接使用。',
+    sub: '把模型、系统提示词和温度保存为一个命名配置，随后在对话中直接使用。',
     new: '新建预设',
     none: '还没有预设。',
     noModel: '未设置模型',
@@ -933,7 +933,7 @@ export default {
     systemPlaceholder: '你是一个简洁、亲切的助手……',
     temperature: '温度',
     delete: '删除',
-    useInPlayground: '在 Playground 中使用',
+    useInPlayground: '在对话中使用',
     save: '保存',
     saved: '预设已更新',
     created: '预设已创建',

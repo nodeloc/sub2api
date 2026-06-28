@@ -27,7 +27,7 @@ export default {
         subtitle:
           'One API key for every frontier and open model. {name} routes each request to the model you pick — or the cheapest that passes — and bills it all in one place.',
         start: 'Start free',
-        playground: 'Open playground'
+        playground: 'Open chat'
       },
       stats: {
         models: 'models',
@@ -564,7 +564,7 @@ export default {
     models: 'Models',
     rankings: 'Rankings',
     providers: 'Providers',
-    playground: 'Playground',
+    playground: 'Chat',
     presets: 'Presets',
     activity: 'Activity',
     logs: 'Logs',
@@ -628,7 +628,7 @@ export default {
       productHead: 'Product',
       devHead: 'Developers',
       companyHead: 'Company',
-      playground: 'Playground',
+      playground: 'Chat',
       credits: 'Credits',
       quickstart: 'Quickstart',
       apiKeys: 'API keys',
@@ -805,7 +805,7 @@ export default {
       componentsHead: 'Components',
       cGateway: 'API Gateway',
       cRouting: 'Model routing',
-      cPlayground: 'Playground',
+      cPlayground: 'Chat',
       cDashboard: 'Dashboard',
       cBilling: 'Billing & credits',
       statusOperational: 'Operational',
@@ -902,7 +902,7 @@ export default {
     billing: 'Billing',
     providers: 'providers',
     availableVia: 'Available via',
-    openInPlayground: 'Open in Playground',
+    openInPlayground: 'Open in Chat',
     billingToken: 'Per token',
     billingPerReq: 'Per request',
     billingImage: 'Per image',
@@ -921,7 +921,7 @@ export default {
     errSend: 'Request failed.',
   },
   presets: {
-    sub: 'Save model, system prompt and temperature as a named config, then use it in the Playground.',
+    sub: 'Save model, system prompt and temperature as a named config, then use it in Chat.',
     new: 'New preset',
     none: 'No presets yet.',
     noModel: 'No model set',
@@ -933,7 +933,7 @@ export default {
     systemPlaceholder: 'You are a concise, warm assistant…',
     temperature: 'Temperature',
     delete: 'Delete',
-    useInPlayground: 'Use in Playground',
+    useInPlayground: 'Use in Chat',
     save: 'Save',
     saved: 'Preset updated',
     created: 'Preset created',

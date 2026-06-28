@@ -21,7 +21,7 @@ export function useUserNav() {
     { path: '/models', label: t('nav.models'), icon: kitIcons.Grid },
     { path: '/rankings', label: t('nav.rankings'), icon: kitIcons.Bolt },
     { path: '/providers', label: t('nav.providers'), icon: kitIcons.Filter },
-    { path: '/playground', label: t('nav.playground'), icon: kitIcons.Chat },
+    { path: '/chat', label: t('nav.playground'), icon: kitIcons.Chat },
     { path: '/presets', label: t('nav.presets'), icon: kitIcons.Sparkle },
     { path: '/usage', label: t('nav.activity'), icon: kitIcons.Chart },
     { path: '/logs', label: t('nav.logs'), icon: kitIcons.List },

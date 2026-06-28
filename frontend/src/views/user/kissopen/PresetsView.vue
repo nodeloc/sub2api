@@ -68,7 +68,7 @@
             <div class="pr-actions__right">
               <router-link
                 v-if="draft.id && draft.model"
-                :to="`/playground?preset=${draft.id}`"
+                :to="`/chat?preset=${draft.id}`"
                 class="ko-btn ko-btn--secondary"
               >
                 <component :is="icons.Sparkle" :size="15" /> {{ t('presets.useInPlayground') }}

@@ -16,7 +16,7 @@
           <div class="kit-detail__provider">{{ selected.platforms.join(' · ') }}</div>
         </div>
         <div class="kit-detail__actions">
-          <router-link :to="`/playground?model=${encodeURIComponent(selected.name)}`" class="ko-btn ko-btn--primary">
+          <router-link :to="`/chat?model=${encodeURIComponent(selected.name)}`" class="ko-btn ko-btn--primary">
             <component :is="icons.Sparkle" :size="16" /> {{ t('models.openInPlayground') }}
           </router-link>
         </div>

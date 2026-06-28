@@ -105,7 +105,7 @@ const cols = computed<{ head: string; items: { label: string; to?: string }[] }[
   const result = [
     { head: t('marketing.footer.productHead'), items: [
       { label: t('home.landing.nav.models'), to: '/models' },
-      { label: t('marketing.footer.playground'), to: '/playground' },
+      { label: t('marketing.footer.playground'), to: '/chat' },
       { label: t('home.landing.nav.pricing'), to: '/pricing' },
       { label: t('marketing.footer.status'), to: '/status' },
     ] },
